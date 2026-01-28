@@ -28,6 +28,8 @@
 		C87D52592F2A892200243D35 /* MangaDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52582F2A892200243D35 /* MangaDTO.swift */; };
 		C87D525B2F2A8A5100243D35 /* MangaPageDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D525A2F2A8A5100243D35 /* MangaPageDTO.swift */; };
 		C87D525D2F2A8BF400243D35 /* UserMangaCollectionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D525C2F2A8BF400243D35 /* UserMangaCollectionDTO.swift */; };
+		C87D52612F2A8FE900243D35 /* AuthorsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52602F2A8FE900243D35 /* AuthorsListView.swift */; };
+		C87D52672F2A9A2100243D35 /* NetworkAPI in Frameworks */ = {isa = PBXBuildFile; productRef = C87D52662F2A9A2100243D35 /* NetworkAPI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +55,8 @@
 		C87D52582F2A892200243D35 /* MangaDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaDTO.swift; sourceTree = "<group>"; };
 		C87D525A2F2A8A5100243D35 /* MangaPageDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaPageDTO.swift; sourceTree = "<group>"; };
 		C87D525C2F2A8BF400243D35 /* UserMangaCollectionDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMangaCollectionDTO.swift; sourceTree = "<group>"; };
+		C87D52602F2A8FE900243D35 /* AuthorsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorsListView.swift; sourceTree = "<group>"; };
+		C87D52652F2A996900243D35 /* NetworkAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = NetworkAPI; path = ../NetworkAPI; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C87D52672F2A9A2100243D35 /* NetworkAPI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				C87D52352F2A7E1600243D35 /* SDP26 */,
+				C87D52642F2A996900243D35 /* Frameworks */,
 				C87D52252F2A7B6600243D35 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,10 +91,10 @@
 		C87D52352F2A7E1600243D35 /* SDP26 */ = {
 			isa = PBXGroup;
 			children = (
+				C87D525E2F2A8DAB00243D35 /* System */,
+				C87D525F2F2A8DB700243D35 /* Views */,
 				C87D52392F2A7E1900243D35 /* Model */,
 				C87D52322F2A7E1600243D35 /* Assets.xcassets */,
-				C87D52332F2A7E1600243D35 /* ContentView.swift */,
-				C87D52342F2A7E1600243D35 /* SDP26App.swift */,
 			);
 			path = SDP26;
 			sourceTree = "<group>";
@@ -118,6 +124,31 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		C87D525E2F2A8DAB00243D35 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				C87D52342F2A7E1600243D35 /* SDP26App.swift */,
+			);
+			path = System;
+			sourceTree = "<group>";
+		};
+		C87D525F2F2A8DB700243D35 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C87D52332F2A7E1600243D35 /* ContentView.swift */,
+				C87D52602F2A8FE900243D35 /* AuthorsListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C87D52642F2A996900243D35 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C87D52652F2A996900243D35 /* NetworkAPI */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,6 +166,7 @@
 			);
 			name = SDP26;
 			packageProductDependencies = (
+				C87D52662F2A9A2100243D35 /* NetworkAPI */,
 			);
 			productName = SDP26;
 			productReference = C87D52242F2A7B6600243D35 /* SDP26.app */;
@@ -202,6 +234,7 @@
 				C87D524F2F2A84C400243D35 /* JWTTokenResponse.swift in Sources */,
 				C87D525B2F2A8A5100243D35 /* MangaPageDTO.swift in Sources */,
 				C87D52592F2A892200243D35 /* MangaDTO.swift in Sources */,
+				C87D52612F2A8FE900243D35 /* AuthorsListView.swift in Sources */,
 				C87D524D2F2A836F00243D35 /* DemographicDTO.swift in Sources */,
 				C87D525D2F2A8BF400243D35 /* UserMangaCollectionDTO.swift in Sources */,
 				C87D524B2F2A81F500243D35 /* UserMangaCollectionRequest.swift in Sources */,
@@ -360,11 +393,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = NO;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -392,11 +425,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = NO;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -423,6 +456,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C87D52662F2A9A2100243D35 /* NetworkAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NetworkAPI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C87D521C2F2A7B6600243D35 /* Project object */;
 }

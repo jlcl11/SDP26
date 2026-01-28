@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum AuthorRole: String, CaseIterable, Sendable {
+enum AuthorRole: String, CaseIterable, Sendable, Codable {
     case storyAndArt = "Story & Art"
     case story = "Story"
     case art = "Art"
