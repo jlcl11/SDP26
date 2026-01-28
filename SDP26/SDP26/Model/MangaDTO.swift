@@ -1,0 +1,30 @@
+//
+//  MangaDTO.swift
+//  SDP26
+//
+//  Created by José Luis Corral López on 28/1/26.
+//
+
+import Foundation
+
+struct MangaDTO: Sendable, Identifiable {
+
+    let id: Int
+    let title: String
+    let titleEnglish: String?
+    let titleJapanese: String?
+    let status: MangaStatus
+    let startDate: Date?
+    let endDate: Date?
+    let chapters: Int?
+    let volumes: Int?
+    let score: Double
+    let mainPicture: String?
+    let sypnosis: String?
+    let background: String?
+    let url: String?
+    let authors: [AuthorDTO]
+    let genres: [GenreDTO]
+    let themes: [ThemeDTO]
+    let demographics: [DemographicDTO]
+}
