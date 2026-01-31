@@ -16,6 +16,10 @@ protocol BestMangaRepository: Sendable {
     func getBestMangas(page: Int) async throws -> MangaPageDTO
 }
 
+protocol MangaBeginsWithRepository: Sendable {
+    func getMangaBeginsWith(name: String) async throws -> [MangaDTO]
+}
+
 protocol AuthorRepository: Sendable {
     func getAuthors(page: Int) async throws -> AuthorPageDTO
 }
@@ -32,7 +36,7 @@ protocol DemographicRepository: Sendable {
     func getDemographics() async throws -> [DemographicDTO]
 }
 
-struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, AuthorRepository, GenreRepository, ThemeRepository, DemographicRepository, Sendable {
+struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, MangaBeginsWithRepository, AuthorRepository, GenreRepository, ThemeRepository, DemographicRepository, Sendable {
     func getAuthors(page: Int) async throws -> AuthorPageDTO {
         try await getJSON(.get(url: .getAuthors(page: page)), type: AuthorPageDTO.self)
     }
@@ -43,6 +47,10 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
 
     func getBestMangas(page: Int) async throws -> MangaPageDTO {
         try await getJSON(.get(url: .getBestMangas(page: page)), type: MangaPageDTO.self)
+    }
+
+    func getMangaBeginsWith(name: String) async throws -> [MangaDTO] {
+        try await getJSON(.get(url: .getMangaBeginsWith(name: name)), type: [MangaDTO].self)
     }
 
     func getGenres() async throws -> [GenreDTO] {

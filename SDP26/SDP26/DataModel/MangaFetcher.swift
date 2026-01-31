@@ -52,6 +52,18 @@ actor AuthorDataSource {
     }
 }
 
+actor MangaBeginsWithDataSource {
+    private let repository: MangaBeginsWithRepository
+
+    init(repository: MangaBeginsWithRepository) {
+        self.repository = repository
+    }
+
+    func fetch(name: String) async throws -> [MangaDTO] {
+        try await repository.getMangaBeginsWith(name: name)
+    }
+}
+
 actor GenreDataSource {
     private let repository: GenreRepository
 

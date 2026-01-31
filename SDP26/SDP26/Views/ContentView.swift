@@ -11,28 +11,43 @@ struct ContentView: View {
     @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
     @MainActor let isiPad = UIDevice.current.userInterfaceIdiom == .pad
 
+    @State private var searchText = ""
     var mangaVM = MangaViewModel.shared
+    var searchVM = MangaBeginsWithViewModel.shared
+
+    private var isSearching: Bool { searchText.count >= 2 }
+    private var mangas: [MangaDTO] { isSearching ? searchVM.mangas : mangaVM.mangas }
+    private var isLoading: Bool { isSearching ? searchVM.isLoading : mangaVM.isLoading }
 
     var body: some View {
         TabView {
             Tab("Mangas", systemImage: "book.fill") {
-                List(mangaVM.mangas) { manga in
-                    Text(manga.title)
-                        .onAppear {
-                            if manga.id == mangaVM.mangas.last?.id {
-                                Task {
-                                    await mangaVM.loadNextPage()
+                NavigationStack {
+                    List(mangas) { manga in
+                        Text(manga.title)
+                            .onAppear {
+                                if !isSearching && manga.id == mangas.last?.id {
+                                    Task {
+                                        await mangaVM.loadNextPage()
+                                    }
                                 }
                             }
-                        }
-                }
-                .overlay {
-                    if mangaVM.isLoading && mangaVM.mangas.isEmpty {
-                        ProgressView()
                     }
-                }
-                .task {
-                    await mangaVM.loadNextPage()
+                    .navigationTitle("Mangas")
+                    .searchable(text: $searchText)
+                    .overlay {
+                        if isLoading && mangas.isEmpty {
+                            ProgressView()
+                        }
+                    }
+                    .onChange(of: searchText) {
+                        if searchText.count >= 2 {
+                            Task { await searchVM.search(name: searchText) }
+                        }
+                    }
+                    .task {
+                        await mangaVM.loadNextPage()
+                    }
                 }
             }
 

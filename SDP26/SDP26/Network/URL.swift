@@ -34,6 +34,10 @@ extension URL {
            ])
     }
     
+    static func getMangaBeginsWith(name: String) -> URL {
+        api.appending(path: "search/mangasBeginsWith/\(name)")
+    }
+    
     static let getDemographics = api.appending(path: "list/demographics")
     static let getGenres = api.appending(path: "list/genres")
     static let getThemes = api.appending(path: "list/themes")
