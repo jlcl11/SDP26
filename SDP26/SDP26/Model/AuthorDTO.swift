@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AuthorDTO: Sendable, Codable {
+struct AuthorDTO: Sendable, Codable, Identifiable {
     let id: UUID
     let firstName: String
     let lastName: String

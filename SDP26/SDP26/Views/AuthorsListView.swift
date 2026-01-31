@@ -8,10 +8,27 @@
 import SwiftUI
 
 struct AuthorsListView: View {
-    var Authors: [AuthorDTO] = []
-    
+    var authorVM = AuthorViewModel.shared
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(authorVM.authors) { author in
+            Text(author.fullName)
+                .onAppear {
+                    if author.id == authorVM.authors.last?.id {
+                        Task {
+                            await authorVM.loadNextPage()
+                        }
+                    }
+                }
+        }
+        .overlay {
+            if authorVM.isLoading && authorVM.authors.isEmpty {
+                ProgressView()
+            }
+        }
+        .task {
+            await authorVM.loadNextPage()
+        }
     }
 }
 

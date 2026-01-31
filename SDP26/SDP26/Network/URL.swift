@@ -19,10 +19,22 @@ extension URL {
     }
 
     static func getAuthors(page: Int, per: Int = 20) -> URL {
-        api.appending(path: "list/authors")
+        api.appending(path: "list/authorsPaged")
            .appending(queryItems: [
                URLQueryItem(name: "page", value: String(page)),
                URLQueryItem(name: "per", value: String(per))
            ])
     }
+    
+    static func getBestMangas(page: Int, per: Int = 20) -> URL {
+        api.appending(path: "list/bestMangas")
+           .appending(queryItems: [
+               URLQueryItem(name: "page", value: String(page)),
+               URLQueryItem(name: "per", value: String(per))
+           ])
+    }
+    
+    static let getDemographics = api.appending(path: "list/demographics")
+    static let getGenres = api.appending(path: "list/genres")
+    static let getThemes = api.appending(path: "list/themes")
 }
