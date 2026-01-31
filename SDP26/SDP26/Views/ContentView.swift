@@ -10,24 +10,31 @@ import SwiftUI
 struct ContentView: View {
     @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
     @MainActor let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-    
+
+    var mangaVM = MangaViewModel.shared
+
     var body: some View {
         TabView {
-            /*Tab("Mangas", systemImage: "book.fill") {
-                if isiPhone {
-                    MangasListView()
-                } else {
-                    MangasListViewiPad()
+            Tab("Mangas", systemImage: "book.fill") {
+                List(mangaVM.mangas) { manga in
+                    Text(manga.title)
+                        .onAppear {
+                            if manga.id == mangaVM.mangas.last?.id {
+                                Task {
+                                    await mangaVM.loadNextPage()
+                                }
+                            }
+                        }
+                }
+                .overlay {
+                    if mangaVM.isLoading && mangaVM.mangas.isEmpty {
+                        ProgressView()
+                    }
+                }
+                .task {
+                    await mangaVM.loadNextPage()
                 }
             }
-
-            Tab("Buscar", systemImage: "magnifyingglass", role: .search) {
-                if isiPhone {
-                    SearchView()
-                } else {
-                    SearchViewiPad()
-                }
-            }*/
 
             Tab("Authors", systemImage: "person.2") {
                 if isiPhone {
@@ -36,22 +43,6 @@ struct ContentView: View {
                   //  AuthorsListViewiPad()
                 }
             }
-/*
-            Tab("Colección", systemImage: "books.vertical") {
-                if isiPhone {
-                    CollectionView()
-                } else {
-                    CollectionViewiPad()
-                }
-            }
-
-            Tab("Perfil", systemImage: "person.circle") {
-                if isiPhone {
-                    ProfileView()
-                } else {
-                    ProfileViewiPad()
-                }
-            }*/
         }
         .tabViewStyle(.sidebarAdaptable)
     }

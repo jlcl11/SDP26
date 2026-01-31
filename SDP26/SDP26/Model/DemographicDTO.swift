@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DemographicDTO: Sendable, Identifiable, Hashable {
+struct DemographicDTO: Sendable, Identifiable, Hashable, Codable {
     let id: UUID
     let demographic: Demographic
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AuthorPageDTO: Sendable {
+struct AuthorPageDTO: Sendable, Codable {
     let items: [AuthorDTO]
     let metadata: PageMetadata
 }

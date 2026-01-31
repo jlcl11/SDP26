@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MangaPageDTO: Sendable {
+struct MangaPageDTO: Sendable, Codable {
     let items: [MangaDTO]
     let metadata: PageMetadata
 }

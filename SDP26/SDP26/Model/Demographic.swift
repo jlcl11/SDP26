@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum Demographic {
-    case Shounen
-    case Seinen
-    case Shoujo
-    case Josei
-    case Kids
+enum Demographic: String, Codable, Sendable {
+    case shounen = "Shounen"
+    case seinen = "Seinen"
+    case shoujo = "Shoujo"
+    case josei = "Josei"
+    case kids = "Kids"
 }

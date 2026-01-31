@@ -7,15 +7,14 @@
 
 import Foundation
 
-struct MangaDTO: Sendable, Identifiable {
-
+struct MangaDTO: Sendable, Identifiable, Codable {
     let id: Int
     let title: String
     let titleEnglish: String?
     let titleJapanese: String?
     let status: MangaStatus
-    let startDate: Date?
-    let endDate: Date?
+    let startDate: String?
+    let endDate: String?
     let chapters: Int?
     let volumes: Int?
     let score: Double
