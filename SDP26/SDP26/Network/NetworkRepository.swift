@@ -24,21 +24,33 @@ protocol AuthorRepository: Sendable {
     func getAuthors(page: Int) async throws -> AuthorPageDTO
 }
 
+protocol AuthorByNameRepository: Sendable {
+    func getAuthorByName(name: String) async throws -> [AuthorDTO]
+}
+
 protocol GenreRepository: Sendable {
-    func getGenres() async throws -> [GenreDTO]
+    func getGenres() async throws -> [String]
 }
 
 protocol ThemeRepository: Sendable {
-    func getThemes() async throws -> [ThemeDTO]
+    func getThemes() async throws -> [String]
 }
 
 protocol DemographicRepository: Sendable {
-    func getDemographics() async throws -> [DemographicDTO]
+    func getDemographics() async throws -> [String]
 }
 
-struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, MangaBeginsWithRepository, AuthorRepository, GenreRepository, ThemeRepository, DemographicRepository, Sendable {
+protocol CustomSearchRepository: Sendable {
+    func customSearch(search: CustomSearch, page: Int) async throws -> MangaPageDTO
+}
+
+struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, MangaBeginsWithRepository, AuthorRepository, AuthorByNameRepository, GenreRepository, ThemeRepository, DemographicRepository, CustomSearchRepository, Sendable {
     func getAuthors(page: Int) async throws -> AuthorPageDTO {
         try await getJSON(.get(url: .getAuthors(page: page)), type: AuthorPageDTO.self)
+    }
+
+    func getAuthorByName(name: String) async throws -> [AuthorDTO] {
+        try await getJSON(.get(url: .getAuthorByName(name: name)), type: [AuthorDTO].self)
     }
 
     func getMangas(page: Int) async throws -> MangaPageDTO {
@@ -53,15 +65,19 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
         try await getJSON(.get(url: .getMangaBeginsWith(name: name)), type: [MangaDTO].self)
     }
 
-    func getGenres() async throws -> [GenreDTO] {
-        try await getJSON(.get(url: .getGenres), type: [GenreDTO].self)
+    func getGenres() async throws -> [String] {
+        try await getJSON(.get(url: .getGenres), type: [String].self)
     }
 
-    func getThemes() async throws -> [ThemeDTO] {
-        try await getJSON(.get(url: .getThemes), type: [ThemeDTO].self)
+    func getThemes() async throws -> [String] {
+        try await getJSON(.get(url: .getThemes), type: [String].self)
     }
 
-    func getDemographics() async throws -> [DemographicDTO] {
-        try await getJSON(.get(url: .getDemographics), type: [DemographicDTO].self)
+    func getDemographics() async throws -> [String] {
+        try await getJSON(.get(url: .getDemographics), type: [String].self)
+    }
+
+    func customSearch(search: CustomSearch, page: Int) async throws -> MangaPageDTO {
+        try await getJSON(.post(url: .customSearch(page: page), body: search), type: MangaPageDTO.self)
     }
 }

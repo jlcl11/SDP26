@@ -11,7 +11,7 @@ import Foundation
 final class ThemeViewModel {
     static let shared = ThemeViewModel(dataSource: ThemeDataSource(repository: NetworkRepository()))
 
-    private(set) var themes: [ThemeDTO] = []
+    private(set) var themes: [String] = []
     private(set) var isLoading = false
     private let dataSource: ThemeDataSource
 
@@ -20,7 +20,7 @@ final class ThemeViewModel {
     }
 
     func load() async {
-        guard !isLoading else { return }
+        guard !isLoading, themes.isEmpty else { return }
         isLoading = true
 
         do {

@@ -11,7 +11,7 @@ import Foundation
 final class GenreViewModel {
     static let shared = GenreViewModel(dataSource: GenreDataSource(repository: NetworkRepository()))
 
-    private(set) var genres: [GenreDTO] = []
+    private(set) var genres: [String] = []
     private(set) var isLoading = false
     private let dataSource: GenreDataSource
 
@@ -20,7 +20,7 @@ final class GenreViewModel {
     }
 
     func load() async {
-        guard !isLoading else { return }
+        guard !isLoading, genres.isEmpty else { return }
         isLoading = true
 
         do {

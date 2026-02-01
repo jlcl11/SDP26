@@ -11,7 +11,7 @@ import Foundation
 final class DemographicViewModel {
     static let shared = DemographicViewModel(dataSource: DemographicDataSource(repository: NetworkRepository()))
 
-    private(set) var demographics: [DemographicDTO] = []
+    private(set) var demographics: [String] = []
     private(set) var isLoading = false
     private let dataSource: DemographicDataSource
 
@@ -20,7 +20,7 @@ final class DemographicViewModel {
     }
 
     func load() async {
-        guard !isLoading else { return }
+        guard !isLoading, demographics.isEmpty else { return }
         isLoading = true
 
         do {

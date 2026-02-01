@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CustomSearch: Codable, Sendable {
+struct CustomSearch: Codable, Sendable, Equatable {
     var searchTitle: String?
     var searchAuthorFirstName: String?
     var searchAuthorLastName: String?

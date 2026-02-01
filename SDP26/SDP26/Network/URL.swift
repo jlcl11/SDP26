@@ -38,6 +38,18 @@ extension URL {
         api.appending(path: "search/mangasBeginsWith/\(name)")
     }
     
+    static func getAuthorByName(name: String) -> URL {
+        api.appending(path: "search/author/\(name)")
+    }
+
+    static func customSearch(page: Int, per: Int = 20) -> URL {
+        api.appending(path: "search/manga")
+           .appending(queryItems: [
+               URLQueryItem(name: "page", value: String(page)),
+               URLQueryItem(name: "per", value: String(per))
+           ])
+    }
+
     static let getDemographics = api.appending(path: "list/demographics")
     static let getGenres = api.appending(path: "list/genres")
     static let getThemes = api.appending(path: "list/themes")

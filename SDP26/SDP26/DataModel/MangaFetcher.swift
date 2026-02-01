@@ -64,6 +64,18 @@ actor MangaBeginsWithDataSource {
     }
 }
 
+actor AuthorByNameDataSource {
+    private let repository: AuthorByNameRepository
+
+    init(repository: AuthorByNameRepository) {
+        self.repository = repository
+    }
+
+    func fetch(name: String) async throws -> [AuthorDTO] {
+        try await repository.getAuthorByName(name: name)
+    }
+}
+
 actor GenreDataSource {
     private let repository: GenreRepository
 
@@ -71,7 +83,7 @@ actor GenreDataSource {
         self.repository = repository
     }
 
-    func fetch() async throws -> [GenreDTO] {
+    func fetch() async throws -> [String] {
         try await repository.getGenres()
     }
 }
@@ -83,7 +95,7 @@ actor ThemeDataSource {
         self.repository = repository
     }
 
-    func fetch() async throws -> [ThemeDTO] {
+    func fetch() async throws -> [String] {
         try await repository.getThemes()
     }
 }
@@ -95,7 +107,26 @@ actor DemographicDataSource {
         self.repository = repository
     }
 
-    func fetch() async throws -> [DemographicDTO] {
+    func fetch() async throws -> [String] {
         try await repository.getDemographics()
+    }
+}
+
+actor CustomSearchDataSource {
+    private let repository: CustomSearchRepository
+    private var currentPage = 1
+
+    init(repository: CustomSearchRepository) {
+        self.repository = repository
+    }
+
+    func fetchNextPage(search: CustomSearch) async throws -> [MangaDTO] {
+        let mangaPage = try await repository.customSearch(search: search, page: currentPage)
+        currentPage += 1
+        return mangaPage.items
+    }
+
+    func reset() {
+        currentPage = 1
     }
 }
