@@ -45,3 +45,9 @@ struct CustomSearchSheet: View {
         }
     }
 }
+
+#Preview {
+    CustomSearchSheet { search in
+        print("Search: \(search)")
+    }
+}

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MangaDTO: Sendable, Identifiable, Codable {
+struct MangaDTO: Sendable, Identifiable, Codable, Hashable {
     let id: Int
     let title: String
     let titleEnglish: String?

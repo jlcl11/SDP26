@@ -63,3 +63,15 @@ enum ContentType {
         }
     }
 }
+
+#Preview("No Search Results") {
+    EmptyStateView.noSearchResults(for: "Naruto", type: .manga)
+}
+
+#Preview("No Filter Results") {
+    EmptyStateView.noFilterResults()
+}
+
+#Preview("No Content") {
+    EmptyStateView.noContent(type: .author)
+}

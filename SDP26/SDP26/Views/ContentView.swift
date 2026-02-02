@@ -18,13 +18,17 @@ struct ContentView: View {
             Tab("Mangas", systemImage: "book.fill") {
                 NavigationStack {
                     List(mangaVM.mangas) { manga in
-                        MangaRow(manga: manga)
-                        
-                            .onAppear {
-                                Task {
-                                    await mangaVM.loadNextPageIfNeeded(for: manga)
-                                }
+                        NavigationLink(value: manga) {
+                            MangaRow(manga: manga)
+                        }
+                        .onAppear {
+                            Task {
+                                await mangaVM.loadNextPageIfNeeded(for: manga)
                             }
+                        }
+                    }
+                    .navigationDestination(for: MangaDTO.self) { manga in
+                        MangaDetailView(manga: manga)
                     }
                     .navigationTitle("Mangas")
                     .searchable(text: $mangaVM.searchText)

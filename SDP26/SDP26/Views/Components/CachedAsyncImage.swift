@@ -37,3 +37,15 @@ struct CachedAsyncImage: View {
         }
     }
 }
+
+#Preview("With URL") {
+    CachedAsyncImage(
+        url: URL(string: "https://cdn.myanimelist.net/images/manga/1/157897l.jpg"),
+        width: 100,
+        height: 150
+    )
+}
+
+#Preview("Without URL") {
+    CachedAsyncImage(url: nil, width: 100, height: 150)
+}

@@ -46,3 +46,23 @@ struct MultiSelectMenu: View {
         }
     }
 }
+
+#Preview("Empty Selection") {
+    Form {
+        MultiSelectMenu(
+            title: "Genres",
+            options: PreviewData.genres,
+            selected: .constant([])
+        )
+    }
+}
+
+#Preview("With Selection") {
+    Form {
+        MultiSelectMenu(
+            title: "Genres",
+            options: PreviewData.genres,
+            selected: .constant(["Action", "Adventure"])
+        )
+    }
+}

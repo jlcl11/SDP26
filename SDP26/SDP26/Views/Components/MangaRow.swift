@@ -22,3 +22,15 @@ struct MangaRow: View {
         }
     }
 }
+
+#Preview("With Image") {
+    List {
+        MangaRow(manga: PreviewData.manga)
+    }
+}
+
+#Preview("Without Image") {
+    List {
+        MangaRow(manga: PreviewData.mangaSimple)
+    }
+}
