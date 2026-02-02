@@ -68,4 +68,14 @@ public actor ImageDownloader {
     nonisolated public func getFileURL(url: URL) -> URL {
         URL.cachesDirectory.appending(path: url.lastPathComponent)
     }
+
+    public func loadImage(url: URL) async -> UIImage? {
+        let file = getFileURL(url: url)
+        if FileManager.default.fileExists(atPath: file.path()) {
+            if let data = try? Data(contentsOf: file) {
+                return UIImage(data: data)
+            }
+        }
+        return try? await image(for: url)
+    }
 }

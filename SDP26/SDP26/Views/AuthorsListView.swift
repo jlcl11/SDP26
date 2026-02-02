@@ -8,36 +8,29 @@
 import SwiftUI
 
 struct AuthorsListView: View {
-    @State private var searchText = ""
-    var authorVM = AuthorViewModel.shared
-    var searchVM = AuthorByNameViewModel.shared
-
-    private var isSearching: Bool { searchText.count >= 2 }
-    private var authors: [AuthorDTO] { isSearching ? searchVM.authors : authorVM.authors }
-    private var isLoading: Bool { isSearching ? searchVM.isLoading : authorVM.isLoading }
+    @Bindable var authorVM = AuthorViewModel.shared
 
     var body: some View {
         NavigationStack {
-            List(authors) { author in
+            List(authorVM.authors) { author in
                 Text(author.fullName)
                     .onAppear {
-                        if !isSearching && author.id == authors.last?.id {
-                            Task {
-                                await authorVM.loadNextPage()
-                            }
+                        Task {
+                            await authorVM.loadNextPageIfNeeded(for: author)
                         }
                     }
             }
             .navigationTitle("Authors")
-            .searchable(text: $searchText)
+            .searchable(text: $authorVM.searchText)
             .overlay {
-                if isLoading && authors.isEmpty {
+                if authorVM.isLoading && authorVM.authors.isEmpty {
                     ProgressView()
-                }
-            }
-            .onChange(of: searchText) {
-                if searchText.count >= 2 {
-                    Task { await searchVM.search(name: searchText) }
+                } else if authorVM.authors.isEmpty {
+                    if authorVM.isSearching {
+                        EmptyStateView.noSearchResults(for: authorVM.searchText, type: .author)
+                    } else {
+                        EmptyStateView.noContent(type: .author)
+                    }
                 }
             }
             .task {

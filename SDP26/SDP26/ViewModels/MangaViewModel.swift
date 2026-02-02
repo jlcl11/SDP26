@@ -9,27 +9,98 @@ import Foundation
 
 @Observable
 final class MangaViewModel {
-    static let shared = MangaViewModel(dataSource: MangaDataSource(repository: NetworkRepository()))
+    static let shared = MangaViewModel(
+        dataSource: MangaDataSource(repository: NetworkRepository()),
+        searchVM: MangaBeginsWithViewModel.shared,
+        customSearchVM: CustomSearchViewModel.shared
+    )
 
-    private(set) var mangas: [MangaDTO] = []
-    private(set) var isLoading = false
+    private static let minimumSearchLength = 2
+
+    private var allMangas: [MangaDTO] = []
+    private(set) var isLoadingAll = false
     private let dataSource: MangaDataSource
 
-    init(dataSource: MangaDataSource) {
+    private let searchVM: MangaBeginsWithViewModel
+    private let customSearchVM: CustomSearchViewModel
+
+    var searchText: String = "" {
+        didSet {
+            handleSearchTextChange()
+        }
+    }
+
+    private(set) var isCustomSearchActive = false
+    var showSearchSheet = false
+
+    var mangas: [MangaDTO] {
+        if isCustomSearchActive {
+            return customSearchVM.mangas
+        } else if isSearching {
+            return searchVM.mangas
+        } else {
+            return allMangas
+        }
+    }
+
+    var isLoading: Bool {
+        if isCustomSearchActive {
+            return customSearchVM.isLoading
+        } else if isSearching {
+            return searchVM.isLoading
+        } else {
+            return isLoadingAll
+        }
+    }
+
+    var isSearching: Bool {
+        searchText.count >= Self.minimumSearchLength
+    }
+
+    var filterIconName: String {
+        isCustomSearchActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle"
+    }
+
+    init(dataSource: MangaDataSource, searchVM: MangaBeginsWithViewModel, customSearchVM: CustomSearchViewModel) {
         self.dataSource = dataSource
+        self.searchVM = searchVM
+        self.customSearchVM = customSearchVM
     }
 
     func loadNextPage() async {
-        guard !isLoading else { return }
-        isLoading = true
+        guard !isLoadingAll else { return }
+        isLoadingAll = true
 
         do {
             let newMangas = try await dataSource.fetchNextPage()
-            mangas.append(contentsOf: newMangas)
+            allMangas.append(contentsOf: newMangas)
         } catch {
             print("Error: \(error)")
         }
 
-        isLoading = false
+        isLoadingAll = false
+    }
+
+    func loadNextPageIfNeeded(for manga: MangaDTO) async {
+        guard manga.id == mangas.last?.id else { return }
+
+        if isCustomSearchActive {
+            await customSearchVM.loadNextPage()
+        } else if !isSearching {
+            await loadNextPage()
+        }
+    }
+
+    func performCustomSearch(_ search: CustomSearch) async {
+        isCustomSearchActive = true
+        searchText = ""
+        await customSearchVM.search(search)
+    }
+
+    private func handleSearchTextChange() {
+        if isSearching {
+            isCustomSearchActive = false
+            Task { await searchVM.search(name: searchText) }
+        }
     }
 }

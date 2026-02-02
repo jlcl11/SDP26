@@ -6,86 +6,53 @@
 //
 
 import SwiftUI
+import NetworkAPI
 
 struct ContentView: View {
     @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
     @MainActor let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-
-    @State private var searchText = ""
-    @State private var showSearchSheet = false
-    @State private var isCustomSearchActive = false
-
-    var mangaVM = MangaViewModel.shared
-    var searchVM = MangaBeginsWithViewModel.shared
-    var customSearchVM = CustomSearchViewModel.shared
-
-    private var isSearching: Bool { searchText.count >= 2 }
-
-    private var mangas: [MangaDTO] {
-        if isCustomSearchActive {
-            return customSearchVM.mangas
-        } else if isSearching {
-            return searchVM.mangas
-        } else {
-            return mangaVM.mangas
-        }
-    }
-
-    private var isLoading: Bool {
-        if isCustomSearchActive {
-            return customSearchVM.isLoading
-        } else if isSearching {
-            return searchVM.isLoading
-        } else {
-            return mangaVM.isLoading
-        }
-    }
-
+    @Bindable var mangaVM = MangaViewModel.shared
+    
     var body: some View {
         TabView {
             Tab("Mangas", systemImage: "book.fill") {
                 NavigationStack {
-                    List(mangas) { manga in
-                        Text(manga.title)
+                    List(mangaVM.mangas) { manga in
+                        MangaRow(manga: manga)
+                        
                             .onAppear {
-                                if manga.id == mangas.last?.id {
-                                    Task {
-                                        if isCustomSearchActive {
-                                            await customSearchVM.loadNextPage()
-                                        } else if !isSearching {
-                                            await mangaVM.loadNextPage()
-                                        }
-                                    }
+                                Task {
+                                    await mangaVM.loadNextPageIfNeeded(for: manga)
                                 }
                             }
                     }
                     .navigationTitle("Mangas")
-                    .searchable(text: $searchText)
+                    .searchable(text: $mangaVM.searchText)
                     .overlay {
-                        if isLoading && mangas.isEmpty {
+                        if mangaVM.isLoading && mangaVM.mangas.isEmpty {
                             ProgressView()
-                        }
-                    }
-                    .onChange(of: searchText) {
-                        if searchText.count >= 2 {
-                            isCustomSearchActive = false
-                            Task { await searchVM.search(name: searchText) }
+                        } else if mangaVM.mangas.isEmpty {
+                            if mangaVM.isCustomSearchActive {
+                                EmptyStateView.noFilterResults()
+                            } else if mangaVM.isSearching {
+                                EmptyStateView.noSearchResults(for: mangaVM.searchText, type: .manga)
+                            } else {
+                                EmptyStateView.noContent(type: .manga)
+                            }
                         }
                     }
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
                             Button {
-                                showSearchSheet = true
+                                mangaVM.showSearchSheet = true
                             } label: {
-                                Image(systemName: isCustomSearchActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                                Image(systemName: mangaVM.filterIconName)
                             }
                         }
                     }
-                    .sheet(isPresented: $showSearchSheet) {
+                    .sheet(isPresented: $mangaVM.showSearchSheet) {
                         CustomSearchSheet { search in
-                            isCustomSearchActive = true
-                            searchText = ""
-                            Task { await customSearchVM.search(search) }
+                            Task { await mangaVM.performCustomSearch(search) }
                         }
                     }
                     .task {
@@ -93,12 +60,12 @@ struct ContentView: View {
                     }
                 }
             }
-
+            
             Tab("Authors", systemImage: "person.2") {
                 if isiPhone {
                     AuthorsListView()
                 } else {
-                  //  AuthorsListViewiPad()
+                    //  AuthorsListViewiPad()
                 }
             }
         }
