@@ -61,6 +61,29 @@ final class MangaViewModel {
         isCustomSearchActive ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle"
     }
 
+    enum OverlayState {
+        case loading
+        case noFilterResults
+        case noSearchResults(String)
+        case noContent
+        case none
+    }
+
+    var overlayState: OverlayState {
+        if isLoading && mangas.isEmpty {
+            return .loading
+        } else if mangas.isEmpty {
+            if isCustomSearchActive {
+                return .noFilterResults
+            } else if isSearching {
+                return .noSearchResults(searchText)
+            } else {
+                return .noContent
+            }
+        }
+        return .none
+    }
+
     init(dataSource: MangaDataSource, searchVM: MangaBeginsWithViewModel, customSearchVM: CustomSearchViewModel) {
         self.dataSource = dataSource
         self.searchVM = searchVM

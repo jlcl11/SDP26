@@ -18,7 +18,25 @@ struct MangaRow: View {
     var body: some View {
         HStack {
             CachedAsyncImage(url: imageURL, width: 75, height: 75)
-            Text(manga.title)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(manga.title)
+                    .font(.headline)
+                    .lineLimit(1)
+
+                    HStack(spacing: 4) {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                            .font(.caption)
+                        Text(manga.score.formatted(.number.precision(.fractionLength(2))))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                
+                Text(manga.status.displayName)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }

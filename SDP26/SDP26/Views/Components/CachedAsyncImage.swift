@@ -20,7 +20,7 @@ struct CachedAsyncImage: View {
             if let image {
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
                     .frame(width: width, height: height)
             } else {
                 Image(systemName: "photo")

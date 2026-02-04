@@ -38,7 +38,7 @@ struct MangaDetailView: View {
         }
         .ignoresSafeArea(edges: .top)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarBackground(.hidden, for: .bottomBar)
     }
 
     private var heroImage: some View {
