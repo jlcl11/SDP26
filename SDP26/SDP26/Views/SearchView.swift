@@ -47,8 +47,11 @@ struct SearchView: View {
                 prompt: "Search manga by name..."
             )
             .onChange(of: searchText) { _, newValue in
-                guard newValue.count >= 2 else { return }
-                Task { await vm.search(name: newValue) }
+                if newValue.count >= 2 {
+                    Task { await vm.search(name: newValue) }
+                } else {
+                    vm.clear()
+                }
             }
             .navigationDestination(item: $selectedManga) { manga in
                 MangaDetailView(manga: manga)

@@ -26,12 +26,21 @@ struct ContentView: View {
                     //  AuthorsListViewiPad()
                 }
             }
-            
+
+            Tab("Collection", systemImage: "books.vertical") {
+                CollectionView()
+            }
+
+            Tab("Profile", systemImage: "person.circle") {
+                ProfileView()
+            }
+
             Tab("Search", systemImage: "magnifyingglass", role: .search) {
                 SearchView()
             }
         }
         .tabViewStyle(.sidebarAdaptable)
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 }
 

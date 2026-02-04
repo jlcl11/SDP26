@@ -31,4 +31,8 @@ final class MangaBeginsWithViewModel {
 
         isLoading = false
     }
+
+    func clear() {
+        mangas = []
+    }
 }

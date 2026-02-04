@@ -10,11 +10,11 @@ import NetworkAPI
 
 struct CachedAsyncImage: View {
     @State private var image: UIImage?
-    
+
     let url: URL?
     let width: CGFloat
     let height: CGFloat
-    
+
     var body: some View {
         Group {
             if let image {
@@ -23,17 +23,25 @@ struct CachedAsyncImage: View {
                     .scaledToFill()
                     .frame(width: width, height: height)
             } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .scaledToFit()
+                Rectangle()
+                    .fill(.secondary.opacity(0.2))
                     .frame(width: width, height: height)
             }
         }
-        .onAppear {
+        .task(id: url) {
             guard let url else { return }
-            Task {
-                image = await ImageDownloader.shared.loadImage(url: url)
+
+            // 1. Check disk cache first (fastest)
+            let fileURL = ImageDownloader.shared.getFileURL(url: url)
+            if FileManager.default.fileExists(atPath: fileURL.path()),
+               let data = try? Data(contentsOf: fileURL),
+               let cachedImage = UIImage(data: data) {
+                image = cachedImage
+                return
             }
+
+            // 2. Download and cache
+            image = await ImageDownloader.shared.loadImage(url: url)
         }
     }
 }
