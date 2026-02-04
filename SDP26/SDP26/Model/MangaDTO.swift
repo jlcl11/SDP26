@@ -13,8 +13,8 @@ struct MangaDTO: Sendable, Identifiable, Codable, Hashable {
     let titleEnglish: String?
     let titleJapanese: String?
     let status: MangaStatus
-    let startDate: String?
-    let endDate: String?
+    let startDate: Date?
+    let endDate: Date?
     let chapters: Int?
     let volumes: Int?
     let score: Double

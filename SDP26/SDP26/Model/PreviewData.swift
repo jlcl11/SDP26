@@ -8,6 +8,10 @@
 import Foundation
 
 enum PreviewData {
+    private static func date(_ string: String) -> Date? {
+        ISO8601DateFormatter().date(from: string + "T00:00:00Z")
+    }
+
     static let author = AuthorDTO(
         id: UUID(),
         firstName: "Kentaro",
@@ -37,7 +41,7 @@ enum PreviewData {
         titleEnglish: "Berserk",
         titleJapanese: "ベルセルク",
         status: .ongoing,
-        startDate: "1989-08-25",
+        startDate: date("1989-08-25"),
         endDate: nil,
         chapters: 364,
         volumes: 41,
@@ -58,7 +62,7 @@ enum PreviewData {
         titleEnglish: "One Piece",
         titleJapanese: "ワンピース",
         status: .ongoing,
-        startDate: "1997-07-22",
+        startDate: date("1997-07-22"),
         endDate: nil,
         chapters: nil,
         volumes: 107,

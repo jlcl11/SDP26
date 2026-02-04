@@ -12,7 +12,7 @@ struct BestMangasCarousel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Best Mangas")
+            Label("Best Mangas", systemImage: "star.fill")
                 .font(.headline)
                 .padding(.horizontal)
 
@@ -42,27 +42,34 @@ struct MangaCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-         CachedAsyncImage(url: imageURL,width: 100, height: 120)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+            CachedAsyncImage(url: imageURL, width: 100, height: 140)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
 
             Text(manga.title)
                 .font(.caption)
-                .lineLimit(1)
+                .fontWeight(.medium)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
 
-            Text(manga.score.formatted(.number.precision(.fractionLength(2))))
-                .font(.caption2)
-                .foregroundStyle(.secondary)
+            HStack(spacing: 2) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(.yellow)
+                Text(manga.score.formatted(.number.precision(.fractionLength(1))))
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
         }
         .frame(width: 100)
     }
 }
 
-#Preview("With Mangas") {
+#Preview("Carousel") {
     NavigationStack {
         BestMangasCarousel(mangas: PreviewData.mangas)
     }
 }
 
-#Preview("Empty") {
-    BestMangasCarousel(mangas: [])
+#Preview("Card") {
+    MangaCard(manga: PreviewData.manga)
+        .padding()
 }

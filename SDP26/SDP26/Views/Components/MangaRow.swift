@@ -16,39 +16,42 @@ struct MangaRow: View {
     }
 
     var body: some View {
-        HStack {
-            CachedAsyncImage(url: imageURL, width: 75, height: 75)
+        HStack(spacing: 12) {
+            CachedAsyncImage(url: imageURL, width: 60, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
+
             VStack(alignment: .leading, spacing: 4) {
                 Text(manga.title)
-                    .font(.headline)
-                    .lineLimit(1)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .lineLimit(2)
 
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow)
-                            .font(.caption)
-                        Text(manga.score.formatted(.number.precision(.fractionLength(2))))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                
+                HStack(spacing: 4) {
+                    Image(systemName: "star.fill")
+                        .foregroundStyle(.yellow)
+                    Text(manga.score.formatted(.number.precision(.fractionLength(1))))
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
                 Text(manga.status.displayName)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.caption2)
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(manga.status == .currentlyPublishing ? .green : .blue, in: Capsule())
             }
+
+            Spacer(minLength: 0)
         }
+        .padding(.vertical, 4)
     }
 }
 
-#Preview("With Image") {
+#Preview {
     List {
         MangaRow(manga: PreviewData.manga)
-    }
-}
-
-#Preview("Without Image") {
-    List {
         MangaRow(manga: PreviewData.mangaSimple)
     }
+    .listStyle(.plain)
 }
