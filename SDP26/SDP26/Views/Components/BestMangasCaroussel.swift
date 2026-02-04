@@ -54,7 +54,7 @@ struct MangaCard: View {
             HStack(spacing: 2) {
                 Image(systemName: "star.fill")
                     .foregroundStyle(.yellow)
-                Text(manga.score.formatted(.number.precision(.fractionLength(1))))
+                Text(manga.score.formatted(.number.precision(.fractionLength(2))))
             }
             .font(.caption2)
             .foregroundStyle(.secondary)

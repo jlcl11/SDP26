@@ -30,7 +30,7 @@ struct MangaDetailView: View {
     }
 
     private var headerImage: some View {
-        CachedAsyncImage(url: imageURL, width: UIScreen.main.bounds.width, height: 300)
+        CachedAsyncImage(url: imageURL, width: .infinity, height: 500)
             .overlay(alignment: .bottom) {
                 LinearGradient(
                     colors: [.clear, Color(.systemBackground)],
@@ -51,13 +51,8 @@ struct MangaDetailView: View {
                 synopsisSection(synopsis)
             }
             
-            
             tagsSection
         
-          
-
-           
-
             if let volumes = manga.volumes {
                 collectionSection(count: volumes)
             }
@@ -88,12 +83,7 @@ struct MangaDetailView: View {
                     .foregroundStyle(.secondary)
             }
 
-            HStack(spacing: 12) {
-                Label(String(format: "%.1f", manga.score), systemImage: "star.fill")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.yellow)
-
+            VStack(alignment: .leading, spacing: 12) {
                 Text(manga.status.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
@@ -101,6 +91,12 @@ struct MangaDetailView: View {
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background(manga.status == .currentlyPublishing ? .green : .blue, in: Capsule())
+                Label(manga.score.formatted(.number.precision(.fractionLength(2))), systemImage: "star.fill")
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.yellow)
+
+              
             }
         }
     }
@@ -403,8 +399,3 @@ struct ReadingOptionRow: View {
     }
 }
 
-#Preview("Minimal") {
-    NavigationStack {
-        MangaDetailView(manga: PreviewData.mangaSimple)
-    }
-}
