@@ -26,4 +26,9 @@ struct MangaDTO: Sendable, Identifiable, Codable, Hashable {
     let genres: [GenreDTO]
     let themes: [ThemeDTO]
     let demographics: [DemographicDTO]
+
+    var imageURL: URL? {
+        guard let picture = mainPicture else { return nil }
+        return URL(string: picture.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
+    }
 }

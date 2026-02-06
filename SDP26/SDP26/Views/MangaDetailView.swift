@@ -13,16 +13,11 @@ struct MangaDetailView: View {
     @State private var volumesOwned: Set<Int> = [1, 2, 3]
     @State private var readingVolume: Int? = 2
 
-    private var imageURL: URL? {
-        guard let picture = manga.mainPicture else { return nil }
-        return URL(string: picture.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
-    }
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // Header Image
-                CachedAsyncImage(url: imageURL, width: .infinity, height: 500)
+                CachedAsyncImage(url: manga.imageURL, width: .infinity, height: 500)
                     .overlay(alignment: .bottom) {
                         LinearGradient(
                             colors: [.clear, Color(.systemBackground)],
@@ -100,16 +95,21 @@ struct MangaDetailView: View {
                     if !manga.authors.isEmpty {
                         VStack(alignment: .leading, spacing: 8) {
                             ForEach(manga.authors) { author in
-                                HStack(spacing: 12) {
-                                    Text(author.firstName.prefix(1).uppercased()).avatar()
+                                NavigationLink(value: author) {
+                                    HStack(spacing: 12) {
+                                        Text(author.firstName.prefix(1).uppercased()).avatar()
 
-                                    VStack(alignment: .leading) {
-                                        Text(author.fullName).font(.subheadline)
-                                        Text(author.role.rawValue.capitalized).secondaryText()
+                                        VStack(alignment: .leading) {
+                                            Text(author.fullName).font(.subheadline)
+                                            Text(author.role.rawValue.capitalized).secondaryText()
+                                        }
+
+                                        Spacer()
+
+
                                     }
-
-                                    Spacer()
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .sectionHeader("Authors")
@@ -128,6 +128,9 @@ struct MangaDetailView: View {
         }
         .ignoresSafeArea(edges: .top)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: AuthorDTO.self) { author in
+            AuthorDetailView(author: author)
+        }
     }
 }
 

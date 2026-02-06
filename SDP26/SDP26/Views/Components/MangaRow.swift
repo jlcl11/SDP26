@@ -10,21 +10,14 @@ import SwiftUI
 struct MangaRow: View {
     let manga: MangaDTO
 
-    private var imageURL: URL? {
-        guard let picture = manga.mainPicture else { return nil }
-        return URL(string: picture.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
-    }
-
     var body: some View {
         HStack(spacing: 12) {
-            CachedAsyncImage(url: imageURL, width: 60, height: 80)
+            CachedAsyncImage(url: manga.imageURL, width: 60, height: 80)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(manga.title)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
+                    .rowTitle()
 
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")

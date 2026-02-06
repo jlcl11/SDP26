@@ -35,21 +35,13 @@ struct BestMangasCarousel: View {
 struct MangaCard: View {
     let manga: MangaDTO
 
-    private var imageURL: URL? {
-        guard let picture = manga.mainPicture else { return nil }
-        return URL(string: picture.trimmingCharacters(in: CharacterSet(charactersIn: "\"")))
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            CachedAsyncImage(url: imageURL, width: 100, height: 140)
+            CachedAsyncImage(url: manga.imageURL, width: 100, height: 140)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             Text(manga.title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .lineLimit(2)
-                .multilineTextAlignment(.leading)
+                .cardTitle()
 
             HStack(spacing: 2) {
                 Image(systemName: "star.fill")

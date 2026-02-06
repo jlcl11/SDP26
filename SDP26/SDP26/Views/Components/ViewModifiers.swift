@@ -29,6 +29,19 @@ extension View {
     func sectionTitle() -> some View {
         self.font(.headline)
     }
+
+    func rowTitle() -> some View {
+        self.font(.subheadline)
+            .fontWeight(.medium)
+            .lineLimit(2)
+    }
+
+    func cardTitle() -> some View {
+        self.font(.caption)
+            .fontWeight(.medium)
+            .lineLimit(2)
+            .multilineTextAlignment(.leading)
+    }
 }
 
 // MARK: - Badge & Tag Styles
@@ -74,6 +87,14 @@ extension View {
     func avatar(size: CGFloat = 32) -> some View {
         self.font(.caption)
             .fontWeight(.semibold)
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(.blue.gradient, in: Circle())
+    }
+
+    func largeAvatar(size: CGFloat = 80) -> some View {
+        self.font(.title)
+            .fontWeight(.bold)
             .foregroundStyle(.white)
             .frame(width: size, height: size)
             .background(.blue.gradient, in: Circle())

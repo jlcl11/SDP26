@@ -13,15 +13,20 @@ struct AuthorsListView: View {
     var body: some View {
         NavigationStack {
             List(authorVM.authors) { author in
-                AuthorRow(author: author)
-                    .onAppear {
-                        Task {
-                            await authorVM.loadNextPageIfNeeded(for: author)
-                        }
+                NavigationLink(value: author) {
+                    AuthorRow(author: author)
+                }
+                .onAppear {
+                    Task {
+                        await authorVM.loadNextPageIfNeeded(for: author)
                     }
+                }
             }
             .listStyle(.plain)
             .navigationTitle("Authors")
+            .navigationDestination(for: AuthorDTO.self) { author in
+                AuthorDetailView(author: author)
+            }
             .searchable(text: $authorVM.searchText, prompt: "Search authors...")
             .overlay {
                 if authorVM.isLoading && authorVM.authors.isEmpty {
@@ -57,12 +62,10 @@ struct AuthorRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(author.fullName)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
+                    .rowTitle()
 
                 Text(author.role.rawValue.capitalized)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .secondaryText()
             }
 
             Spacer()

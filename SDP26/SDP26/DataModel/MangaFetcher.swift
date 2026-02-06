@@ -130,3 +130,22 @@ actor CustomSearchDataSource {
         currentPage = 1
     }
 }
+
+actor MangasByAuthorDataSource {
+    private let repository: MangasByAuthorRepository
+    private var currentPage = 1
+
+    init(repository: MangasByAuthorRepository) {
+        self.repository = repository
+    }
+
+    func fetchNextPage(authorID: UUID) async throws -> [MangaDTO] {
+        let mangaPage = try await repository.getMangasByAuthor(authorID: authorID, page: currentPage)
+        currentPage += 1
+        return mangaPage.items
+    }
+
+    func reset() {
+        currentPage = 1
+    }
+}
