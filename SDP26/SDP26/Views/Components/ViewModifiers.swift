@@ -101,6 +101,47 @@ extension View {
     }
 }
 
+// MARK: - Auth Form Styles
+
+extension View {
+    func fieldLabel() -> some View {
+        self.font(.subheadline)
+            .fontWeight(.medium)
+            .foregroundStyle(.secondary)
+    }
+
+    func fieldIcon() -> some View {
+        self.foregroundStyle(.secondary)
+            .frame(width: 20)
+    }
+
+    func inputField() -> some View {
+        self.padding()
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+
+    func authBackground(colors: [Color] = [Color.blue.opacity(0.1), Color.purple.opacity(0.1)]) -> some View {
+        self.background {
+            LinearGradient(
+                colors: colors,
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+        }
+    }
+
+    func primaryButton(color: Color = .blue, isEnabled: Bool = true) -> some View {
+        self.frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .background(color.gradient, in: RoundedRectangle(cornerRadius: 12))
+            .foregroundStyle(.white)
+            .fontWeight(.semibold)
+            .contentShape(Rectangle())
+            .opacity(isEnabled ? 1 : 0.6)
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Text Styles") {

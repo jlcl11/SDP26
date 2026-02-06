@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import NetworkAPI
 
 struct AuthorDetailView: View {
     let author: AuthorDTO
@@ -68,6 +69,17 @@ struct AuthorDetailView: View {
         }
         .task {
             await viewModel.fetchMangasByAuthor(author: author)
+
+            // Preload images in parallel
+            await withTaskGroup(of: Void.self) { group in
+                for manga in viewModel.mangas {
+                    if let imageURL = manga.imageURL {
+                        group.addTask {
+                            _ = await ImageDownloader.shared.loadImage(url: imageURL)
+                        }
+                    }
+                }
+            }
         }
     }
 }
