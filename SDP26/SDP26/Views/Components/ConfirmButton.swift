@@ -25,3 +25,10 @@ extension View {
         modifier(ConfirmButton(action: action))
     }
 }
+
+#Preview {
+    NavigationStack {
+        Text("Content")
+            .confirmButton { }
+    }
+}

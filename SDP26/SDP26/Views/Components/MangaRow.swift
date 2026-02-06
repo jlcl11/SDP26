@@ -31,15 +31,10 @@ struct MangaRow: View {
                         .foregroundStyle(.yellow)
                     Text(manga.score.formatted(.number.precision(.fractionLength(2))))
                 }
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .secondaryText()
 
                 Text(manga.status.displayName)
-                    .font(.caption2)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 2)
-                    .background(manga.status == .currentlyPublishing ? .green : .blue, in: Capsule())
+                    .badge(manga.status == .currentlyPublishing ? .green : .blue)
             }
 
             Spacer(minLength: 0)

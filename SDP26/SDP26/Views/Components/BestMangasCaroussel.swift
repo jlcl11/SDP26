@@ -56,8 +56,7 @@ struct MangaCard: View {
                     .foregroundStyle(.yellow)
                 Text(manga.score.formatted(.number.precision(.fractionLength(2))))
             }
-            .font(.caption2)
-            .foregroundStyle(.secondary)
+            .secondaryText()
         }
         .frame(width: 100)
     }

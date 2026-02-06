@@ -34,6 +34,14 @@ extension URL {
            ])
     }
     
+    static func getMangasByAuthor(page: Int, per: Int = 20, authorID:UUID) -> URL {
+        api.appending(path: "list/mangaByAuthor/\(authorID)")
+           .appending(queryItems: [
+               URLQueryItem(name: "page", value: String(page)),
+               URLQueryItem(name: "per", value: String(per))
+           ])
+    }
+    
     static func getMangaBeginsWith(name: String) -> URL {
         api.appending(path: "search/mangasBeginsWith/\(name)")
     }

@@ -44,7 +44,11 @@ protocol CustomSearchRepository: Sendable {
     func customSearch(search: CustomSearch, page: Int) async throws -> MangaPageDTO
 }
 
-struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, MangaBeginsWithRepository, AuthorRepository, AuthorByNameRepository, GenreRepository, ThemeRepository, DemographicRepository, CustomSearchRepository, Sendable {
+protocol MangasByAuthorRepository: Sendable {
+    func getMangasByAuthor(authorID: UUID, page: Int) async throws -> MangaPageDTO
+}
+
+struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepository, MangaBeginsWithRepository, AuthorRepository, AuthorByNameRepository, GenreRepository, ThemeRepository, DemographicRepository, CustomSearchRepository, MangasByAuthorRepository, Sendable {
     func getAuthors(page: Int) async throws -> AuthorPageDTO {
         try await getJSON(.get(url: .getAuthors(page: page)), type: AuthorPageDTO.self)
     }
@@ -79,5 +83,9 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
 
     func customSearch(search: CustomSearch, page: Int) async throws -> MangaPageDTO {
         try await getJSON(.post(url: .customSearch(page: page), body: search), type: MangaPageDTO.self)
+    }
+
+    func getMangasByAuthor(authorID: UUID, page: Int) async throws -> MangaPageDTO {
+        try await getJSON(.get(url: .getMangasByAuthor(page: page, authorID: authorID)), type: MangaPageDTO.self)
     }
 }
