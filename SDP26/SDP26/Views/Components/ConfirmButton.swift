@@ -14,8 +14,24 @@ fileprivate struct ConfirmButton: ViewModifier {
         content
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Done", action: action)
+                    if #available(iOS 26, *) {
+                        Button(role: .confirm) {
+                            action()
+                        } label: {
+                            Label("Guardar", systemImage: "checkmark")
+                        }
+                    } else {
+                        Button {
+                            action()
+                        } label: {
+                            Label("Guardar", systemImage: "checkmark")
+                        }
+                    }
                 }
+                
+                
+                
+              
             }
     }
 }
