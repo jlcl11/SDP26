@@ -11,20 +11,25 @@ import NetworkAPI
 struct ContentView: View {
     @MainActor let isiPhone = UIDevice.current.userInterfaceIdiom == .phone
     @MainActor let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-  
-    
+
+    var body: some View {
+        if isiPad {
+            iPadContentView()
+        } else {
+            iPhoneContentView()
+        }
+    }
+}
+
+struct iPhoneContentView: View {
     var body: some View {
         TabView {
             Tab("Mangas", systemImage: "book.fill") {
-               MangaListView()
+                MangaListView()
             }
-            
+
             Tab("Authors", systemImage: "person.2") {
-                if isiPhone {
-                    AuthorsListView()
-                } else {
-                    //  AuthorsListViewiPad()
-                }
+                AuthorsListView()
             }
 
             Tab("Collection", systemImage: "books.vertical") {
@@ -44,6 +49,10 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
+#Preview("iPhone") {
+    iPhoneContentView()
+}
+
+#Preview("iPad") {
+    iPadContentView()
 }

@@ -14,6 +14,13 @@
 		C829C6862F36700C00B5FE01 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C6852F36700C00B5FE01 /* RegisterView.swift */; };
 		C829C6882F36754800B5FE01 /* RegisterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C6872F36754800B5FE01 /* RegisterViewModel.swift */; };
 		C829C68A2F36754D00B5FE01 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C6892F36754D00B5FE01 /* LoginViewModel.swift */; };
+		C829C6932F36772E00B5FE01 /* iPadAuthorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C68B2F36772E00B5FE01 /* iPadAuthorDetailView.swift */; };
+		C829C6942F36772E00B5FE01 /* iPadCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C68D2F36772E00B5FE01 /* iPadCollectionView.swift */; };
+		C829C6952F36772E00B5FE01 /* iPadSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C6912F36772E00B5FE01 /* iPadSearchView.swift */; };
+		C829C6962F36772E00B5FE01 /* iPadAuthorsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C68C2F36772E00B5FE01 /* iPadAuthorsListView.swift */; };
+		C829C6972F36772E00B5FE01 /* iPadMangaDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C68F2F36772E00B5FE01 /* iPadMangaDetailView.swift */; };
+		C829C6982F36772E00B5FE01 /* iPadMangaListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C6902F36772E00B5FE01 /* iPadMangaListView.swift */; };
+		C829C6992F36772E00B5FE01 /* iPadContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C68E2F36772E00B5FE01 /* iPadContentView.swift */; };
 		C87D52362F2A7E1600243D35 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C87D52322F2A7E1600243D35 /* Assets.xcassets */; };
 		C87D52372F2A7E1600243D35 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52332F2A7E1600243D35 /* ContentView.swift */; };
 		C87D52382F2A7E1600243D35 /* SDP26App.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52342F2A7E1600243D35 /* SDP26App.swift */; };
@@ -77,6 +84,13 @@
 		C829C6852F36700C00B5FE01 /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		C829C6872F36754800B5FE01 /* RegisterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewModel.swift; sourceTree = "<group>"; };
 		C829C6892F36754D00B5FE01 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		C829C68B2F36772E00B5FE01 /* iPadAuthorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadAuthorDetailView.swift; sourceTree = "<group>"; };
+		C829C68C2F36772E00B5FE01 /* iPadAuthorsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadAuthorsListView.swift; sourceTree = "<group>"; };
+		C829C68D2F36772E00B5FE01 /* iPadCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadCollectionView.swift; sourceTree = "<group>"; };
+		C829C68E2F36772E00B5FE01 /* iPadContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadContentView.swift; sourceTree = "<group>"; };
+		C829C68F2F36772E00B5FE01 /* iPadMangaDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadMangaDetailView.swift; sourceTree = "<group>"; };
+		C829C6902F36772E00B5FE01 /* iPadMangaListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadMangaListView.swift; sourceTree = "<group>"; };
+		C829C6912F36772E00B5FE01 /* iPadSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadSearchView.swift; sourceTree = "<group>"; };
 		C87D52242F2A7B6600243D35 /* SDP26.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDP26.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C87D52322F2A7E1600243D35 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C87D52332F2A7E1600243D35 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -145,6 +159,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C829C6922F36772E00B5FE01 /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+				C829C68B2F36772E00B5FE01 /* iPadAuthorDetailView.swift */,
+				C829C68C2F36772E00B5FE01 /* iPadAuthorsListView.swift */,
+				C829C68D2F36772E00B5FE01 /* iPadCollectionView.swift */,
+				C829C68E2F36772E00B5FE01 /* iPadContentView.swift */,
+				C829C68F2F36772E00B5FE01 /* iPadMangaDetailView.swift */,
+				C829C6902F36772E00B5FE01 /* iPadMangaListView.swift */,
+				C829C6912F36772E00B5FE01 /* iPadSearchView.swift */,
+			);
+			path = iPad;
+			sourceTree = "<group>";
+		};
 		C87D521B2F2A7B6600243D35 = {
 			isa = PBXGroup;
 			children = (
@@ -214,6 +242,7 @@
 		C87D525F2F2A8DB700243D35 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C829C6922F36772E00B5FE01 /* iPad */,
 				C886A87B2F311CBF00A6EE9F /* Components */,
 				C87D52332F2A7E1600243D35 /* ContentView.swift */,
 				C829C67D2F36604900B5FE01 /* AuthorDetailView.swift */,
@@ -406,6 +435,13 @@
 				C87D525B2F2A8A5100243D35 /* MangaPageDTO.swift in Sources */,
 				C886A87E2F311E6300A6EE9F /* MangaRow.swift in Sources */,
 				C87D52592F2A892200243D35 /* MangaDTO.swift in Sources */,
+				C829C6932F36772E00B5FE01 /* iPadAuthorDetailView.swift in Sources */,
+				C829C6942F36772E00B5FE01 /* iPadCollectionView.swift in Sources */,
+				C829C6952F36772E00B5FE01 /* iPadSearchView.swift in Sources */,
+				C829C6962F36772E00B5FE01 /* iPadAuthorsListView.swift in Sources */,
+				C829C6972F36772E00B5FE01 /* iPadMangaDetailView.swift in Sources */,
+				C829C6982F36772E00B5FE01 /* iPadMangaListView.swift in Sources */,
+				C829C6992F36772E00B5FE01 /* iPadContentView.swift in Sources */,
 				C87D52612F2A8FE900243D35 /* AuthorsListView.swift in Sources */,
 				C886A88A2F31340F00A6EE9F /* MangaDetailView.swift in Sources */,
 				C886A88C2F3138B500A6EE9F /* PreviewData.swift in Sources */,

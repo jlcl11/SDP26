@@ -101,6 +101,40 @@ extension View {
     }
 }
 
+// MARK: - iPad Styles
+
+extension View {
+    func iPadSectionTitle() -> some View {
+        self.font(.title2)
+            .fontWeight(.bold)
+    }
+
+    func iPadCardTitle() -> some View {
+        self.font(.subheadline)
+            .fontWeight(.semibold)
+            .lineLimit(2)
+            .multilineTextAlignment(.leading)
+    }
+
+    func extraLargeAvatar(size: CGFloat = 120) -> some View {
+        self.font(.system(size: 48, weight: .bold))
+            .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .background(.blue.gradient, in: Circle())
+            .shadow(color: .blue.opacity(0.3), radius: 20, x: 0, y: 10)
+    }
+
+    func cardShadow() -> some View {
+        self.shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+    }
+
+    func statCard() -> some View {
+        self.frame(maxWidth: .infinity)
+            .padding(12)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
+    }
+}
+
 // MARK: - Auth Form Styles
 
 extension View {
