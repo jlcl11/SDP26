@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 @Observable
 final class RegisterViewModel {
     var email = ""
@@ -14,6 +15,13 @@ final class RegisterViewModel {
     var confirmPassword = ""
     private(set) var isLoading = false
     private(set) var isRegistered = false
+    private(set) var error: AuthError?
+
+    private let authVM: AuthViewModel
+
+    init(authVM: AuthViewModel = .shared) {
+        self.authVM = authVM
+    }
 
     var passwordsMatch: Bool {
         !password.isEmpty && password == confirmPassword
@@ -27,13 +35,29 @@ final class RegisterViewModel {
         password.count >= 8
     }
 
+    var emailAlreadyExists: Bool {
+        if case .emailAlreadyExists = error {
+            return true
+        }
+        return false
+    }
+
     func performRegister() async {
         isLoading = true
+        error = nil
 
-        // TODO: Implement actual registration
-        try? await Task.sleep(for: .seconds(1))
+        await authVM.register(email: email, password: password)
+
+        if let authError = authVM.error {
+            error = authError
+        } else {
+            isRegistered = true
+        }
 
         isLoading = false
-        isRegistered = true
+    }
+
+    func clearError() {
+        error = nil
     }
 }

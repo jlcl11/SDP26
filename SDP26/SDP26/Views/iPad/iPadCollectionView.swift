@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct iPadCollectionView: View {
-    @Bindable var vm = BestMangaViewModel.shared
+    @State private var collectionVM = CollectionVM.shared
     @State private var selectedManga: MangaDTO?
     @State private var viewMode: ViewMode = .grid
 
@@ -30,10 +30,10 @@ struct iPadCollectionView: View {
 
     var body: some View {
         Group {
-            if vm.isLoading && vm.mangas.isEmpty {
+            if collectionVM.isLoading && collectionVM.collection.isEmpty {
                 ProgressView("Loading collection...")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if vm.mangas.isEmpty {
+            } else if collectionVM.collection.isEmpty {
                 ContentUnavailableView(
                     "No mangas",
                     systemImage: "books.vertical",
@@ -46,25 +46,25 @@ struct iPadCollectionView: View {
                         HStack(spacing: 24) {
                             CollectionStatCard(
                                 title: "Total Mangas",
-                                value: "\(vm.mangas.count)",
+                                value: "\(collectionVM.totalMangas)",
                                 icon: "book.fill",
                                 color: .blue
                             )
                             CollectionStatCard(
                                 title: "Volumes",
-                                value: "42",
+                                value: "\(collectionVM.totalVolumesOwned)",
                                 icon: "books.vertical.fill",
                                 color: .purple
                             )
                             CollectionStatCard(
                                 title: "Reading",
-                                value: "3",
+                                value: "\(collectionVM.currentlyReadingCount)",
                                 icon: "bookmark.fill",
                                 color: .orange
                             )
                             CollectionStatCard(
                                 title: "Complete",
-                                value: "5",
+                                value: "\(collectionVM.completeCollectionCount)",
                                 icon: "checkmark.circle.fill",
                                 color: .green
                             )
@@ -77,16 +77,18 @@ struct iPadCollectionView: View {
                         // Collection Grid/List
                         if viewMode == .grid {
                             LazyVGrid(columns: columns, spacing: 20) {
-                                ForEach(vm.mangas) { manga in
+                                ForEach(collectionVM.collection) { item in
                                     Button {
-                                        selectedManga = manga
+                                        selectedManga = item.manga
                                     } label: {
-                                        iPadMangaCard(manga: manga)
+                                        iPadCollectionCard(item: item)
                                     }
                                     .buttonStyle(.plain)
                                     .contextMenu {
                                         Button(role: .destructive) {
-                                            // TODO: Implement delete
+                                            Task {
+                                                await collectionVM.deleteManga(id: item.manga.id)
+                                            }
                                         } label: {
                                             Label("Remove from Collection", systemImage: "trash")
                                         }
@@ -96,11 +98,11 @@ struct iPadCollectionView: View {
                             .padding(.horizontal)
                         } else {
                             LazyVStack(spacing: 12) {
-                                ForEach(vm.mangas) { manga in
+                                ForEach(collectionVM.collection) { item in
                                     Button {
-                                        selectedManga = manga
+                                        selectedManga = item.manga
                                     } label: {
-                                        iPadCollectionRow(manga: manga)
+                                        iPadCollectionRow(item: item)
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -129,9 +131,12 @@ struct iPadCollectionView: View {
             iPadMangaDetailView(manga: manga)
         }
         .task {
-            if vm.mangas.isEmpty {
-                await vm.loadNextPage()
+            if collectionVM.collection.isEmpty {
+                await collectionVM.loadCollection()
             }
+        }
+        .refreshable {
+            await collectionVM.loadCollection()
         }
     }
 }
@@ -164,30 +169,82 @@ struct CollectionStatCard: View {
     }
 }
 
+struct iPadCollectionCard: View {
+    let item: UserMangaCollectionDTO
+
+    private var progress: Double {
+        guard let total = item.manga.volumes, total > 0 else { return 0 }
+        return Double(item.volumesOwned.count) / Double(total)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            CachedAsyncImage(url: item.manga.imageURL, width: .infinity, height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(alignment: .topTrailing) {
+                    if item.completeCollection {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.green)
+                            .background(Circle().fill(.white).padding(2))
+                            .padding(8)
+                    }
+                }
+
+            Text(item.manga.title)
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .lineLimit(2)
+
+            if let totalVolumes = item.manga.volumes {
+                ProgressView(value: progress)
+                    .tint(item.completeCollection ? .green : .blue)
+
+                Text("\(item.volumesOwned.count)/\(totalVolumes) volumes")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let readingVolume = item.readingVolume {
+                Text("Reading Vol. \(readingVolume)")
+                    .font(.caption)
+                    .foregroundStyle(.blue)
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))
+    }
+}
+
 struct iPadCollectionRow: View {
-    let manga: MangaDTO
+    let item: UserMangaCollectionDTO
+
+    private var progress: Double {
+        guard let total = item.manga.volumes, total > 0 else { return 0 }
+        return Double(item.volumesOwned.count) / Double(total)
+    }
 
     var body: some View {
         HStack(spacing: 16) {
-            CachedAsyncImage(url: manga.imageURL, width: 80, height: 110)
+            CachedAsyncImage(url: item.manga.imageURL, width: 80, height: 110)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
 
             VStack(alignment: .leading, spacing: 6) {
-                Text(manga.title)
+                Text(item.manga.title)
                     .font(.headline)
 
                 HStack(spacing: 4) {
                     Image(systemName: "star.fill")
                         .foregroundStyle(.yellow)
-                    Text(manga.score.formatted(.number.precision(.fractionLength(1))))
+                    Text(item.manga.score.formatted(.number.precision(.fractionLength(1))))
                 }
                 .subtitleStyle()
 
-                Text(manga.status.displayName)
-                    .badge(manga.status == .currentlyPublishing ? .green : .blue)
+                Text(item.manga.status.displayName)
+                    .badge(item.manga.status == .currentlyPublishing ? .green : .blue)
 
-                if let volumes = manga.volumes {
-                    Text("\(volumes) volumes")
+                if let volumes = item.manga.volumes {
+                    Text("\(item.volumesOwned.count)/\(volumes) volumes")
                         .secondaryText()
                 }
             }
@@ -195,11 +252,25 @@ struct iPadCollectionRow: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 8) {
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.tertiary)
+                if item.completeCollection {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(.green)
+                } else {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.tertiary)
+                }
 
-                ProgressView(value: 0.6)
-                    .frame(width: 100)
+                if item.manga.volumes != nil {
+                    ProgressView(value: progress)
+                        .tint(item.completeCollection ? .green : .blue)
+                        .frame(width: 100)
+                }
+
+                if let readingVolume = item.readingVolume {
+                    Text("Reading Vol. \(readingVolume)")
+                        .font(.caption)
+                        .foregroundStyle(.blue)
+                }
             }
         }
         .card()

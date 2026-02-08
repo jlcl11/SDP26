@@ -7,30 +7,54 @@
 
 import Foundation
 
+@MainActor
 @Observable
 final class LoginViewModel {
     var email = ""
     var password = ""
     private(set) var isLoading = false
-    private(set) var isLoggedIn = false
+    private(set) var error: AuthError?
+
+    private let authVM: AuthViewModel
+
+    init(authVM: AuthViewModel = .shared) {
+        self.authVM = authVM
+    }
 
     var isFormValid: Bool {
         !email.isEmpty && !password.isEmpty && email.contains("@")
     }
 
     func performLogin() async {
+        print("[LoginViewModel] performLogin() called")
+        print("[LoginViewModel] email: \(email), password length: \(password.count)")
         isLoading = true
+        error = nil
 
-        async let mangasTask: () = MangaViewModel.shared.loadNextPage()
-        async let bestMangasTask: () = BestMangaViewModel.shared.loadNextPage()
-        async let authorsTask: () = AuthorViewModel.shared.loadNextPage()
-        async let genresTask: () = GenreViewModel.shared.load()
-        async let themesTask: () = ThemeViewModel.shared.load()
-        async let demographicsTask: () = DemographicViewModel.shared.load()
+        // Use AuthViewModel to perform login
+        await authVM.login(email: email, password: password)
 
-        _ = await (mangasTask, bestMangasTask, authorsTask, genresTask, themesTask, demographicsTask)
+        if let authError = authVM.error {
+            error = authError
+        } else if authVM.isLoggedIn {
+            // Preload app data
+            print("[LoginViewModel] preloading app data...")
+            async let mangasTask: () = MangaViewModel.shared.loadNextPage()
+            async let bestMangasTask: () = BestMangaViewModel.shared.loadNextPage()
+            async let authorsTask: () = AuthorViewModel.shared.loadNextPage()
+            async let genresTask: () = GenreViewModel.shared.load()
+            async let themesTask: () = ThemeViewModel.shared.load()
+            async let demographicsTask: () = DemographicViewModel.shared.load()
+
+            _ = await (mangasTask, bestMangasTask, authorsTask, genresTask, themesTask, demographicsTask)
+            print("[LoginViewModel] app data preloaded")
+        }
 
         isLoading = false
-        isLoggedIn = true
+        print("[LoginViewModel] performLogin() finished - isLoggedIn: \(authVM.isLoggedIn), error: \(String(describing: error))")
+    }
+
+    func clearError() {
+        error = nil
     }
 }

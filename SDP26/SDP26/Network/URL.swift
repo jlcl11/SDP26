@@ -61,4 +61,17 @@ extension URL {
     static let getDemographics = api.appending(path: "list/demographics")
     static let getGenres = api.appending(path: "list/genres")
     static let getThemes = api.appending(path: "list/themes")
+
+    // MARK: - Auth Endpoints
+    static let createUser = api.appending(path: "users")
+    static let loginJWT = api.appending(path: "users/jwt/login")
+    static let refreshJWT = api.appending(path: "users/jwt/refresh")
+    static let meJWT = api.appending(path: "users/jwt/me")
+
+    // MARK: - Collection Endpoints
+    static let collection = api.appending(path: "collection/manga")
+
+    static func collectionManga(id: Int) -> URL {
+        api.appending(path: "collection/manga/\(id)")
+    }
 }

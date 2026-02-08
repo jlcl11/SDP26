@@ -12,14 +12,6 @@ struct LoginView: View {
     @State private var showRegister = false
 
     var body: some View {
-        if viewModel.isLoggedIn {
-            ContentView()
-        } else {
-            loginContent
-        }
-    }
-
-    private var loginContent: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 40) {

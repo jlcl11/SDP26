@@ -44,8 +44,26 @@ struct RegisterView: View {
                                     .keyboardType(.emailAddress)
                                     .autocapitalization(.none)
                                     .autocorrectionDisabled()
+                                    .onChange(of: viewModel.email) {
+                                        viewModel.clearError()
+                                    }
                             }
                             .inputField()
+                            .overlay {
+                                if viewModel.emailAlreadyExists {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(.red, lineWidth: 1)
+                                }
+                            }
+
+                            if viewModel.emailAlreadyExists {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "xmark.circle.fill")
+                                    Text("User already exists")
+                                }
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                            }
                         }
 
                         // Password Field

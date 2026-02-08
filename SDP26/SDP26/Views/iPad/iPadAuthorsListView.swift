@@ -60,7 +60,7 @@ struct iPadAuthorRow: View {
         HStack(spacing: 16) {
             Text(author.firstName.prefix(1).uppercased() + author.lastName.prefix(1).uppercased())
                 .avatar(size: 50)
-                .background(isSelected ? .purple.gradient : .blue.gradient, in: Circle())
+                .background(isSelected ? Color.purple.gradient : Color.blue.gradient, in: Circle())
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(author.fullName)

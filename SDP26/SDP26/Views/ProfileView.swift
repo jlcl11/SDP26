@@ -8,26 +8,28 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @Bindable var vm = BestMangaViewModel.shared
+    @State private var authVM = AuthViewModel.shared
+    @State private var collectionVM = CollectionVM.shared
 
     var body: some View {
         NavigationStack {
             List {
+                // User Info Section
                 Section {
                     HStack(spacing: 16) {
                         Circle()
                             .fill(.blue.gradient)
                             .frame(width: 60, height: 60)
                             .overlay {
-                                Text("J")
+                                Text(userInitial)
                                     .font(.title2.bold())
                                     .foregroundStyle(.white)
                             }
 
                         VStack(alignment: .leading) {
-                            Text("user@example.com")
+                            Text(authVM.currentUser?.email ?? "Loading...")
                                 .font(.headline)
-                            Text("User")
+                            Text(authVM.currentUser?.role.capitalized ?? "User")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
@@ -35,50 +37,107 @@ struct ProfileView: View {
                     .padding(.vertical, 8)
                 }
 
+                // Session Section
                 Section("Session") {
                     Label("Connected", systemImage: "wifi")
-                    Label("Token: 18h 30m", systemImage: "clock.arrow.circlepath")
+                        .foregroundStyle(.green)
+                    if let timeRemaining = authVM.tokenTimeRemaining {
+                        Label("Token: \(timeRemaining)", systemImage: "clock.arrow.circlepath")
+                    }
                 }
 
+                // Collection Summary Section
                 Section("Summary") {
-                    Label("\(vm.mangas.count) mangas", systemImage: "books.vertical.fill")
-                    Label("42 volumes", systemImage: "book.fill")
+                    Label("\(collectionVM.totalMangas) mangas", systemImage: "books.vertical.fill")
+                    Label("\(collectionVM.totalVolumesOwned) volumes", systemImage: "book.fill")
                 }
 
+                // My Collection Section
                 Section("My Collection") {
                     NavigationLink {
-                        CollectionCategoryView(title: "Complete", icon: "checkmark.circle.fill")
+                        CollectionCategoryView(
+                            title: "Complete",
+                            icon: "checkmark.circle.fill",
+                            items: collectionVM.completeCollections
+                        )
                     } label: {
-                        Label("Complete collections", systemImage: "checkmark.circle.fill")
+                        Label {
+                            HStack {
+                                Text("Complete collections")
+                                Spacer()
+                                Text("\(collectionVM.completeCollectionCount)")
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "checkmark.circle.fill")
+                        }
                     }
 
                     NavigationLink {
-                        CollectionCategoryView(title: "Owned", icon: "bookmark.fill")
+                        CollectionCategoryView(
+                            title: "Owned",
+                            icon: "bookmark.fill",
+                            items: collectionVM.owned
+                        )
                     } label: {
-                        Label("Owned", systemImage: "bookmark.fill")
+                        Label {
+                            HStack {
+                                Text("Owned")
+                                Spacer()
+                                Text("\(collectionVM.totalMangas)")
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "bookmark.fill")
+                        }
                     }
 
                     NavigationLink {
-                        CollectionCategoryView(title: "Reading", icon: "book.fill")
+                        CollectionCategoryView(
+                            title: "Reading",
+                            icon: "book.fill",
+                            items: collectionVM.currentlyReading
+                        )
                     } label: {
-                        Label("Currently reading", systemImage: "book.fill")
+                        Label {
+                            HStack {
+                                Text("Currently reading")
+                                Spacer()
+                                Text("\(collectionVM.currentlyReadingCount)")
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "book.fill")
+                        }
                     }
                 }
 
+                // Logout Section
                 Section {
                     Button("Log out", role: .destructive) {
-                        // TODO: Implement logout
+                        Task {
+                            await authVM.logout()
+                        }
                     }
                     .frame(maxWidth: .infinity)
                 }
             }
             .navigationTitle("Profile")
             .task {
-                if vm.mangas.isEmpty {
-                    await vm.loadNextPage()
-                }
+                await collectionVM.loadCollection()
+            }
+            .refreshable {
+                await collectionVM.loadCollection()
             }
         }
+    }
+
+    private var userInitial: String {
+        guard let email = authVM.currentUser?.email,
+              let firstChar = email.first else {
+            return "?"
+        }
+        return String(firstChar).uppercased()
     }
 }
 

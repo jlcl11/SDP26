@@ -74,6 +74,14 @@
 		C89231462F2BD26F00001E62 /* URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89231452F2BD26F00001E62 /* URL.swift */; };
 		C89231492F2BD39C00001E62 /* NetworkRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C89231482F2BD39C00001E62 /* NetworkRepository.swift */; };
 		C892314C2F2BD51400001E62 /* MangaFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892314B2F2BD51400001E62 /* MangaFetcher.swift */; };
+		C8AUTH012F37000100B5FE01 /* SecureStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH022F37000100B5FE01 /* SecureStorage.swift */; };
+		C8AUTH032F37000200B5FE01 /* KeychainStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH042F37000200B5FE01 /* KeychainStorage.swift */; };
+		C8AUTH052F37000300B5FE01 /* AuthError.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH062F37000300B5FE01 /* AuthError.swift */; };
+		C8AUTH072F37000400B5FE01 /* AuthDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH082F37000400B5FE01 /* AuthDTO.swift */; };
+		C8AUTH092F37000500B5FE01 /* AuthDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */; };
+		C8AUTH0B2F37000600B5FE01 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */; };
+		C8FLOW012F37100100B5FE01 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW022F37100100B5FE01 /* RootView.swift */; };
+		C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW042F37100200B5FE01 /* CollectionVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -145,6 +153,14 @@
 		C89231452F2BD26F00001E62 /* URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URL.swift; sourceTree = "<group>"; };
 		C89231482F2BD39C00001E62 /* NetworkRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkRepository.swift; sourceTree = "<group>"; };
 		C892314B2F2BD51400001E62 /* MangaFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaFetcher.swift; sourceTree = "<group>"; };
+		C8AUTH022F37000100B5FE01 /* SecureStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureStorage.swift; sourceTree = "<group>"; };
+		C8AUTH042F37000200B5FE01 /* KeychainStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStorage.swift; sourceTree = "<group>"; };
+		C8AUTH062F37000300B5FE01 /* AuthError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthError.swift; sourceTree = "<group>"; };
+		C8AUTH082F37000400B5FE01 /* AuthDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthDTO.swift; sourceTree = "<group>"; };
+		C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthDataSource.swift; sourceTree = "<group>"; };
+		C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		C8FLOW022F37100100B5FE01 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		C8FLOW042F37100200B5FE01 /* CollectionVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVM.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -215,6 +231,8 @@
 				C87D52402F2A7F9700243D35 /* AuthorsIdsRequest.swift */,
 				C87D52422F2A7FC400243D35 /* GenreDTO.swift */,
 				C87D52442F2A806900243D35 /* PageMetadataDTO.swift */,
+				C8AUTH062F37000300B5FE01 /* AuthError.swift */,
+				C8AUTH082F37000400B5FE01 /* AuthDTO.swift */,
 				C87D52462F2A80CF00243D35 /* CustomSearch.swift */,
 				C87D52482F2A815400243D35 /* AuthorDTO.swift */,
 				C87D524A2F2A81F500243D35 /* UserMangaCollectionRequest.swift */,
@@ -245,6 +263,7 @@
 				C829C6922F36772E00B5FE01 /* iPad */,
 				C886A87B2F311CBF00A6EE9F /* Components */,
 				C87D52332F2A7E1600243D35 /* ContentView.swift */,
+				C8FLOW022F37100100B5FE01 /* RootView.swift */,
 				C829C67D2F36604900B5FE01 /* AuthorDetailView.swift */,
 				C829C6832F366FFD00B5FE01 /* LoginView.swift */,
 				C886A8892F31340F00A6EE9F /* MangaDetailView.swift */,
@@ -283,6 +302,8 @@
 				C829C6892F36754D00B5FE01 /* LoginViewModel.swift */,
 				C88327032F2E816F007A2AE8 /* MangaViewModel.swift */,
 				C829C67F2F36605D00B5FE01 /* MangasByAuthorViewModel.swift */,
+				C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */,
+				C8FLOW042F37100200B5FE01 /* CollectionVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -317,6 +338,9 @@
 			isa = PBXGroup;
 			children = (
 				C892314B2F2BD51400001E62 /* MangaFetcher.swift */,
+				C8AUTH022F37000100B5FE01 /* SecureStorage.swift */,
+				C8AUTH042F37000200B5FE01 /* KeychainStorage.swift */,
+				C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */,
 			);
 			path = DataModel;
 			sourceTree = "<group>";
@@ -428,6 +452,12 @@
 				C886A9142F33656F00A6EE9F /* CollectionCategoryView.swift in Sources */,
 				C829C6802F36605D00B5FE01 /* MangasByAuthorViewModel.swift in Sources */,
 				C892314C2F2BD51400001E62 /* MangaFetcher.swift in Sources */,
+				C8AUTH012F37000100B5FE01 /* SecureStorage.swift in Sources */,
+				C8AUTH032F37000200B5FE01 /* KeychainStorage.swift in Sources */,
+				C8AUTH052F37000300B5FE01 /* AuthError.swift in Sources */,
+				C8AUTH072F37000400B5FE01 /* AuthDTO.swift in Sources */,
+				C8AUTH092F37000500B5FE01 /* AuthDataSource.swift in Sources */,
+				C8AUTH0B2F37000600B5FE01 /* AuthViewModel.swift in Sources */,
 				C829C67E2F36604A00B5FE01 /* AuthorDetailView.swift in Sources */,
 				C88327122F2F6BBD007A2AE8 /* AuthorByNameViewModel.swift in Sources */,
 				C88327042F2E816F007A2AE8 /* MangaViewModel.swift in Sources */,
@@ -459,6 +489,8 @@
 				C886A9152F3380A000A6EE9F /* ViewModifiers.swift in Sources */,
 				C886A9172F3381B000A6EE9F /* MangaDetailComponents.swift in Sources */,
 				C886A9192F3382C000A6EE9F /* MangaCollectionCard.swift in Sources */,
+				C8FLOW012F37100100B5FE01 /* RootView.swift in Sources */,
+				C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

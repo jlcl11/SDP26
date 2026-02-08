@@ -10,8 +10,11 @@ import NetworkAPI
 
 struct MangaDetailView: View {
     let manga: MangaDTO
-    @State private var volumesOwned: Set<Int> = [1, 2, 3]
-    @State private var readingVolume: Int? = 2
+
+    @State private var collectionVM = CollectionVM.shared
+    @State private var volumesOwned: Set<Int> = []
+    @State private var readingVolume: Int?
+    @State private var isSaving = false
 
     var body: some View {
         ScrollView {
@@ -131,6 +134,45 @@ struct MangaDetailView: View {
         .navigationDestination(for: AuthorDTO.self) { author in
             AuthorDetailView(author: author)
         }
+        .task {
+            await loadCollectionStatus()
+        }
+        .onChange(of: volumesOwned) { _, _ in
+            Task { await saveCollection() }
+        }
+        .onChange(of: readingVolume) { _, _ in
+            Task { await saveCollection() }
+        }
+    }
+
+    // MARK: - Collection Methods
+
+    private func loadCollectionStatus() async {
+        // Ensure collection is loaded
+        if collectionVM.collection.isEmpty {
+            await collectionVM.loadCollection()
+        }
+
+        // Find this manga in the collection
+        if let item = collectionVM.getItem(for: manga.id) {
+            volumesOwned = Set(item.volumesOwned)
+            readingVolume = item.readingVolume
+        }
+    }
+
+    private func saveCollection() async {
+        guard !isSaving else { return }
+        isSaving = true
+
+        let request = UserMangaCollectionRequest(
+            volumesOwned: volumesOwned.sorted(),
+            completeCollection: volumesOwned.count >= (manga.volumes ?? 0),
+            manga: manga.id,
+            readingVolume: readingVolume
+        )
+
+        await collectionVM.addOrUpdateManga(request)
+        isSaving = false
     }
 }
 

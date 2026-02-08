@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserMangaCollectionDTO: Sendable, Identifiable {
+struct UserMangaCollectionDTO: Codable, Sendable, Identifiable {
     let completeCollection: Bool
     let id: String
     let volumesOwned: [Int]

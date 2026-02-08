@@ -9,8 +9,11 @@ import SwiftUI
 
 struct iPadMangaDetailView: View {
     let manga: MangaDTO
-    @State private var volumesOwned: Set<Int> = [1, 2, 3]
-    @State private var readingVolume: Int? = 2
+
+    @State private var collectionVM = CollectionVM.shared
+    @State private var volumesOwned: Set<Int> = []
+    @State private var readingVolume: Int?
+    @State private var isSaving = false
     @State private var selectedAuthor: AuthorDTO?
 
     var body: some View {
@@ -152,6 +155,43 @@ struct iPadMangaDetailView: View {
         .navigationDestination(item: $selectedAuthor) { author in
             iPadAuthorDetailView(author: author)
         }
+        .task {
+            await loadCollectionStatus()
+        }
+        .onChange(of: volumesOwned) { _, _ in
+            Task { await saveCollection() }
+        }
+        .onChange(of: readingVolume) { _, _ in
+            Task { await saveCollection() }
+        }
+    }
+
+    // MARK: - Collection Methods
+
+    private func loadCollectionStatus() async {
+        if collectionVM.collection.isEmpty {
+            await collectionVM.loadCollection()
+        }
+
+        if let item = collectionVM.getItem(for: manga.id) {
+            volumesOwned = Set(item.volumesOwned)
+            readingVolume = item.readingVolume
+        }
+    }
+
+    private func saveCollection() async {
+        guard !isSaving else { return }
+        isSaving = true
+
+        let request = UserMangaCollectionRequest(
+            volumesOwned: volumesOwned.sorted(),
+            completeCollection: volumesOwned.count >= (manga.volumes ?? 0),
+            manga: manga.id,
+            readingVolume: readingVolume
+        )
+
+        await collectionVM.addOrUpdateManga(request)
+        isSaving = false
     }
 }
 

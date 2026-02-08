@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CollectionView: View {
-    @Bindable var vm = BestMangaViewModel.shared
+    @State private var collectionVM = CollectionVM.shared
     @State private var selectedManga: MangaDTO?
 
     private let columns = [
@@ -18,25 +18,27 @@ struct CollectionView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                if vm.isLoading && vm.mangas.isEmpty {
+                if collectionVM.isLoading && collectionVM.collection.isEmpty {
                     ProgressView("Loading collection...")
                         .frame(maxWidth: .infinity, minHeight: 300)
-                } else if vm.mangas.isEmpty {
+                } else if collectionVM.collection.isEmpty {
                     emptyState
                 } else {
                     LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(vm.mangas) { manga in
+                        ForEach(collectionVM.collection) { item in
                             Button {
-                                selectedManga = manga
+                                selectedManga = item.manga
                             } label: {
-                                MangaCard(manga: manga)
+                                CollectionMangaCard(item: item)
                             }
                             .buttonStyle(.plain)
                             .contextMenu {
                                 Button(role: .destructive) {
-                                    // TODO: Implement delete
+                                    Task {
+                                        await collectionVM.deleteManga(id: item.manga.id)
+                                    }
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label("Remove from collection", systemImage: "trash")
                                 }
                             }
                         }
@@ -49,9 +51,12 @@ struct CollectionView: View {
                 MangaDetailView(manga: manga)
             }
             .task {
-                if vm.mangas.isEmpty {
-                    await vm.loadNextPage()
+                if collectionVM.collection.isEmpty {
+                    await collectionVM.loadCollection()
                 }
+            }
+            .refreshable {
+                await collectionVM.loadCollection()
             }
         }
     }
@@ -63,6 +68,35 @@ struct CollectionView: View {
             description: Text("Your collection is empty. Add mangas from the Mangas tab.")
         )
         .frame(maxWidth: .infinity, minHeight: 300)
+    }
+}
+
+// MARK: - Collection Manga Card
+
+private struct CollectionMangaCard: View {
+    let item: UserMangaCollectionDTO
+
+    var body: some View {
+        VStack(spacing: 8) {
+            MangaCard(manga: item.manga)
+
+            // Progress indicator
+            if let totalVolumes = item.manga.volumes, totalVolumes > 0 {
+                ProgressView(value: Double(item.volumesOwned.count), total: Double(totalVolumes))
+                    .tint(item.completeCollection ? .green : .blue)
+
+                Text("\(item.volumesOwned.count)/\(totalVolumes)")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+
+            // Reading indicator
+            if let readingVolume = item.readingVolume {
+                Text("Reading Vol. \(readingVolume)")
+                    .font(.caption2)
+                    .foregroundStyle(.blue)
+            }
+        }
     }
 }
 
