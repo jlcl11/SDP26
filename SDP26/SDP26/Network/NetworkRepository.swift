@@ -205,8 +205,12 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
     func addOrUpdateManga(_ request: UserMangaCollectionRequest, token: String) async throws {
         print("[NetworkRepository] addOrUpdateManga() - URL: \(URL.collection), manga: \(request.manga)")
         do {
-            _ = try await getJSON(.post(url: .collection, body: request, auth: .bearer(token: token)), type: UserMangaCollectionDTO.self)
-            print("[NetworkRepository] addOrUpdateManga() - SUCCESS")
+            // Server may return 200 (update) or 201 (create) - both are success
+            try await postJSON(.post(url: .collection, body: request, auth: .bearer(token: token)), status: 200)
+            print("[NetworkRepository] addOrUpdateManga() - SUCCESS (200)")
+        } catch NetworkError.status(201) {
+            // 201 Created is also success for new collection items
+            print("[NetworkRepository] addOrUpdateManga() - SUCCESS (201)")
         } catch {
             print("[NetworkRepository] addOrUpdateManga() - FAILED: \(error)")
             throw error

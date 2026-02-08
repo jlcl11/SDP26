@@ -39,7 +39,7 @@ extension View {
     func cardTitle() -> some View {
         self.font(.caption)
             .fontWeight(.medium)
-            .lineLimit(2)
+            .lineLimit(1)
             .multilineTextAlignment(.leading)
     }
 }

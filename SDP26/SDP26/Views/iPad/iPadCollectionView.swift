@@ -179,8 +179,52 @@ struct iPadCollectionCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
+            // Image with overlays
             CachedAsyncImage(url: item.manga.imageURL, width: .infinity, height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
+                .overlay(alignment: .bottom) {
+                    // Progress overlay
+                    VStack(spacing: 6) {
+                        Spacer()
+
+                        if let readingVolume = item.readingVolume {
+                            Text("Reading Vol. \(readingVolume)")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.white)
+                        }
+
+                        if let totalVolumes = item.manga.volumes, totalVolumes > 0 {
+                            VStack(spacing: 3) {
+                                GeometryReader { geo in
+                                    ZStack(alignment: .leading) {
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .fill(.white.opacity(0.3))
+                                        RoundedRectangle(cornerRadius: 3)
+                                            .fill(item.completeCollection ? .green : .white)
+                                            .frame(width: geo.size.width * progress)
+                                    }
+                                }
+                                .frame(height: 6)
+
+                                Text("\(item.volumesOwned.count)/\(totalVolumes)")
+                                    .font(.caption2)
+                                    .fontWeight(.medium)
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
                 .overlay(alignment: .topTrailing) {
                     if item.completeCollection {
                         Image(systemName: "checkmark.circle.fill")
@@ -196,20 +240,13 @@ struct iPadCollectionCard: View {
                 .fontWeight(.medium)
                 .lineLimit(2)
 
-            if let totalVolumes = item.manga.volumes {
-                ProgressView(value: progress)
-                    .tint(item.completeCollection ? .green : .blue)
-
-                Text("\(item.volumesOwned.count)/\(totalVolumes) volumes")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            HStack(spacing: 4) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(.yellow)
+                Text(item.manga.score.formatted(.number.precision(.fractionLength(2))))
             }
-
-            if let readingVolume = item.readingVolume {
-                Text("Reading Vol. \(readingVolume)")
-                    .font(.caption)
-                    .foregroundStyle(.blue)
-            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
         .padding()
         .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 16))

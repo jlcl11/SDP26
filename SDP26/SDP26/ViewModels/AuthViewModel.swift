@@ -108,16 +108,10 @@ final class AuthViewModel {
 
     // MARK: - Private
 
+    /// Only checks local Keychain - no network calls
+    /// If valid token exists locally, user is logged in immediately
     private func checkSession() async {
         isLoggedIn = await dataSource.loadSession()
-
-        if isLoggedIn {
-            do {
-                try await dataSource.refreshTokenIfNeeded()
-                await fetchCurrentUser()
-            } catch {
-                isLoggedIn = false
-            }
-        }
+        // No network calls here - user data will be fetched lazily when needed
     }
 }

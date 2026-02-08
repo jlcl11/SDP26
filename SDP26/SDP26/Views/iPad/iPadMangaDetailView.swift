@@ -13,7 +13,7 @@ struct iPadMangaDetailView: View {
     @State private var collectionVM = CollectionVM.shared
     @State private var volumesOwned: Set<Int> = []
     @State private var readingVolume: Int?
-    @State private var isSaving = false
+    @State private var saveTask: Task<Void, Never>?
     @State private var selectedAuthor: AuthorDTO?
 
     var body: some View {
@@ -159,10 +159,10 @@ struct iPadMangaDetailView: View {
             await loadCollectionStatus()
         }
         .onChange(of: volumesOwned) { _, _ in
-            Task { await saveCollection() }
+            scheduleCollectionSave()
         }
         .onChange(of: readingVolume) { _, _ in
-            Task { await saveCollection() }
+            scheduleCollectionSave()
         }
     }
 
@@ -179,19 +179,23 @@ struct iPadMangaDetailView: View {
         }
     }
 
-    private func saveCollection() async {
-        guard !isSaving else { return }
-        isSaving = true
+    private func scheduleCollectionSave() {
+        saveTask?.cancel()
+        saveTask = Task {
+            try? await Task.sleep(for: .milliseconds(300))
+            guard !Task.isCancelled else { return }
+            await saveCollection()
+        }
+    }
 
+    private func saveCollection() async {
         let request = UserMangaCollectionRequest(
             volumesOwned: volumesOwned.sorted(),
             completeCollection: volumesOwned.count >= (manga.volumes ?? 0),
             manga: manga.id,
             readingVolume: readingVolume
         )
-
         await collectionVM.addOrUpdateManga(request)
-        isSaving = false
     }
 }
 

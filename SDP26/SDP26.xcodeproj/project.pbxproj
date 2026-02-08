@@ -80,8 +80,8 @@
 		C8AUTH072F37000400B5FE01 /* AuthDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH082F37000400B5FE01 /* AuthDTO.swift */; };
 		C8AUTH092F37000500B5FE01 /* AuthDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */; };
 		C8AUTH0B2F37000600B5FE01 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */; };
-		C8FLOW012F37100100B5FE01 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW022F37100100B5FE01 /* RootView.swift */; };
 		C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW042F37100200B5FE01 /* CollectionVM.swift */; };
+		C8FLOW052F37100300B5FE01 /* CollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -159,8 +159,8 @@
 		C8AUTH082F37000400B5FE01 /* AuthDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthDTO.swift; sourceTree = "<group>"; };
 		C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthDataSource.swift; sourceTree = "<group>"; };
 		C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
-		C8FLOW022F37100100B5FE01 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		C8FLOW042F37100200B5FE01 /* CollectionVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVM.swift; sourceTree = "<group>"; };
+		C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDataSource.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,7 +263,6 @@
 				C829C6922F36772E00B5FE01 /* iPad */,
 				C886A87B2F311CBF00A6EE9F /* Components */,
 				C87D52332F2A7E1600243D35 /* ContentView.swift */,
-				C8FLOW022F37100100B5FE01 /* RootView.swift */,
 				C829C67D2F36604900B5FE01 /* AuthorDetailView.swift */,
 				C829C6832F366FFD00B5FE01 /* LoginView.swift */,
 				C886A8892F31340F00A6EE9F /* MangaDetailView.swift */,
@@ -341,6 +340,7 @@
 				C8AUTH022F37000100B5FE01 /* SecureStorage.swift */,
 				C8AUTH042F37000200B5FE01 /* KeychainStorage.swift */,
 				C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */,
+				C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */,
 			);
 			path = DataModel;
 			sourceTree = "<group>";
@@ -489,8 +489,8 @@
 				C886A9152F3380A000A6EE9F /* ViewModifiers.swift in Sources */,
 				C886A9172F3381B000A6EE9F /* MangaDetailComponents.swift in Sources */,
 				C886A9192F3382C000A6EE9F /* MangaCollectionCard.swift in Sources */,
-				C8FLOW012F37100100B5FE01 /* RootView.swift in Sources */,
 				C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */,
+				C8FLOW052F37100300B5FE01 /* CollectionDataSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

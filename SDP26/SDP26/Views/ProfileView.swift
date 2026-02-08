@@ -124,9 +124,14 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .task {
+                // Fetch user data lazily when ProfileView appears
+                if authVM.currentUser == nil {
+                    await authVM.fetchCurrentUser()
+                }
                 await collectionVM.loadCollection()
             }
             .refreshable {
+                await authVM.fetchCurrentUser()
                 await collectionVM.loadCollection()
             }
         }

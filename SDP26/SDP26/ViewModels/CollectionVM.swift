@@ -7,22 +7,18 @@
 
 import Foundation
 
-@MainActor
 @Observable
 final class CollectionVM {
-    static let shared = CollectionVM()
+    static let shared = CollectionVM(dataSource: CollectionDataSource.shared)
 
     private(set) var collection: [UserMangaCollectionDTO] = []
     private(set) var isLoading = false
     private(set) var errorMessage: String?
 
-    private let repository: CollectionRepository
-    private let authViewModel: AuthViewModel
+    private let dataSource: CollectionDataSource
 
-    init(repository: CollectionRepository = NetworkRepository(),
-         authViewModel: AuthViewModel = .shared) {
-        self.repository = repository
-        self.authViewModel = authViewModel
+    init(dataSource: CollectionDataSource) {
+        self.dataSource = dataSource
     }
 
     // MARK: - Computed Properties
@@ -68,8 +64,7 @@ final class CollectionVM {
         errorMessage = nil
 
         do {
-            let token = try await authViewModel.validToken()
-            collection = try await repository.getCollection(token: token)
+            collection = try await dataSource.fetchCollection()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -83,8 +78,7 @@ final class CollectionVM {
 
     func addOrUpdateManga(_ request: UserMangaCollectionRequest) async {
         do {
-            let token = try await authViewModel.validToken()
-            try await repository.addOrUpdateManga(request, token: token)
+            try await dataSource.addOrUpdate(request)
             await loadCollection()
         } catch {
             errorMessage = error.localizedDescription
@@ -93,8 +87,7 @@ final class CollectionVM {
 
     func deleteManga(id: Int) async {
         do {
-            let token = try await authViewModel.validToken()
-            try await repository.deleteManga(id: id, token: token)
+            try await dataSource.delete(mangaId: id)
             collection.removeAll { $0.manga.id == id }
         } catch {
             errorMessage = error.localizedDescription
@@ -103,8 +96,7 @@ final class CollectionVM {
 
     func getMangaFromCollection(id: Int) async -> UserMangaCollectionDTO? {
         do {
-            let token = try await authViewModel.validToken()
-            return try await repository.getMangaFromCollection(id: id, token: token)
+            return try await dataSource.fetchManga(id: id)
         } catch {
             return nil
         }

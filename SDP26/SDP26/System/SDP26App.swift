@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SDP26App: App {
+    @State private var authVM = AuthViewModel.shared
+
     var body: some Scene {
         WindowGroup {
-            RootView()
+            if authVM.isLoggedIn {
+                ContentView()
+            } else {
+                LoginView()
+            }
         }
     }
 }

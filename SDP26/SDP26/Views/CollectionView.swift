@@ -76,27 +76,84 @@ struct CollectionView: View {
 private struct CollectionMangaCard: View {
     let item: UserMangaCollectionDTO
 
+    private var progress: Double {
+        guard let total = item.manga.volumes, total > 0 else { return 0 }
+        return Double(item.volumesOwned.count) / Double(total)
+    }
+
     var body: some View {
-        VStack(spacing: 8) {
-            MangaCard(manga: item.manga)
+        VStack(alignment: .leading, spacing: 6) {
+            // Image with overlays
+            CachedAsyncImage(url: item.manga.imageURL, width: 100, height: 140)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .overlay(alignment: .bottom) {
+                    // Gradient + Progress overlay
+                    VStack(spacing: 4) {
+                        Spacer()
 
-            // Progress indicator
-            if let totalVolumes = item.manga.volumes, totalVolumes > 0 {
-                ProgressView(value: Double(item.volumesOwned.count), total: Double(totalVolumes))
-                    .tint(item.completeCollection ? .green : .blue)
+                        // Reading indicator
+                        if let readingVolume = item.readingVolume {
+                            Text("Vol. \(readingVolume)")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.white)
+                        }
 
-                Text("\(item.volumesOwned.count)/\(totalVolumes)")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
+                        // Progress bar
+                        if let totalVolumes = item.manga.volumes, totalVolumes > 0 {
+                            VStack(spacing: 2) {
+                                GeometryReader { geo in
+                                    ZStack(alignment: .leading) {
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(.white.opacity(0.3))
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .fill(item.completeCollection ? .green : .white)
+                                            .frame(width: geo.size.width * progress)
+                                    }
+                                }
+                                .frame(height: 4)
+
+                                Text("\(item.volumesOwned.count)/\(totalVolumes)")
+                                    .font(.system(size: 9, weight: .medium))
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                    }
+                    .padding(6)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        LinearGradient(
+                            colors: [.clear, .black.opacity(0.7)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .overlay(alignment: .topTrailing) {
+                    // Complete badge
+                    if item.completeCollection {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.caption)
+                            .foregroundStyle(.green)
+                            .background(Circle().fill(.white).padding(-2))
+                            .padding(4)
+                    }
+                }
+
+            // Title
+            Text(item.manga.title)
+                .cardTitle()
+
+            // Score
+            HStack(spacing: 2) {
+                Image(systemName: "star.fill")
+                    .foregroundStyle(.yellow)
+                Text(item.manga.score.formatted(.number.precision(.fractionLength(2))))
             }
-
-            // Reading indicator
-            if let readingVolume = item.readingVolume {
-                Text("Reading Vol. \(readingVolume)")
-                    .font(.caption2)
-                    .foregroundStyle(.blue)
-            }
+            .secondaryText()
         }
+        .frame(width: 100)
     }
 }
 
