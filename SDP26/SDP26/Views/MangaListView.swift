@@ -47,9 +47,14 @@ struct MangaListView: View {
                 }
             }
             .sheet(isPresented: $mangaVM.showSearchSheet) {
-                CustomSearchSheet { search in
-                    Task { await mangaVM.performCustomSearch(search) }
-                }
+                CustomSearchSheet(
+                    onSearch: { search in
+                        Task { await mangaVM.performCustomSearch(search) }
+                    },
+                    onReset: {
+                        Task { await mangaVM.resetCustomSearch() }
+                    }
+                )
             }
             .task {
                 await mangaVM.loadNextPage()

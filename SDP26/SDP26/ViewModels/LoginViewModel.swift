@@ -31,22 +31,23 @@ final class LoginViewModel {
         error = nil
 
         // Use AuthViewModel to perform login
-        await authVM.login(email: email, password: password)
+        let success = await authVM.login(email: email, password: password)
 
         if let authError = authVM.error {
             error = authError
-        } else if authVM.isLoggedIn {
-            // Preload app data
+        } else if success {
+            // Preload all data BEFORE navigating
             print("[LoginViewModel] preloading app data...")
             async let mangasTask: () = MangaViewModel.shared.loadNextPage()
             async let bestMangasTask: () = BestMangaViewModel.shared.loadNextPage()
             async let authorsTask: () = AuthorViewModel.shared.loadNextPage()
-            async let genresTask: () = GenreViewModel.shared.load()
-            async let themesTask: () = ThemeViewModel.shared.load()
-            async let demographicsTask: () = DemographicViewModel.shared.load()
+            async let collectionTask: () = CollectionVM.shared.loadCollection()
 
-            _ = await (mangasTask, bestMangasTask, authorsTask, genresTask, themesTask, demographicsTask)
+            _ = await (mangasTask, bestMangasTask, authorsTask, collectionTask)
             print("[LoginViewModel] app data preloaded")
+
+            // NOW navigate to ContentView
+            authVM.completeLogin()
         }
 
         isLoading = false
@@ -55,5 +56,14 @@ final class LoginViewModel {
 
     func clearError() {
         error = nil
+    }
+
+    func preloadData() async {
+        // Preload data that doesn't require authentication
+        async let genresTask: () = GenreViewModel.shared.load()
+        async let themesTask: () = ThemeViewModel.shared.load()
+        async let demographicsTask: () = DemographicViewModel.shared.load()
+
+        _ = await (genresTask, themesTask, demographicsTask)
     }
 }

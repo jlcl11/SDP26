@@ -102,6 +102,9 @@ struct LoginView: View {
             .sheet(isPresented: $showRegister) {
                 RegisterView()
             }
+            .task {
+                await viewModel.preloadData()
+            }
         }
     }
 }

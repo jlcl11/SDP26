@@ -120,6 +120,11 @@ final class MangaViewModel {
         await customSearchVM.search(search)
     }
 
+    func resetCustomSearch() async {
+        isCustomSearchActive = false
+        await customSearchVM.reset()
+    }
+
     private func handleSearchTextChange() {
         if isSearching {
             isCustomSearchActive = false

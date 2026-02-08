@@ -84,10 +84,10 @@ actor AuthDataSource {
     }
 
     func loadSession() async -> Bool {
+        // Load token even if expired - we'll try to refresh it
         guard let tokenData = await storage.load(key: tokenKey),
               let token = String(data: tokenData, encoding: .utf8),
-              let expiration = await loadExpiration(),
-              Date() < expiration else {
+              let expiration = await loadExpiration() else {
             return false
         }
 

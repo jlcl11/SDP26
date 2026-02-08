@@ -12,6 +12,7 @@ struct CustomSearchSheet: View {
 
     @Bindable var formVM = SearchFormViewModel.shared
     var onSearch: (CustomSearch) -> Void
+    var onReset: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,14 @@ struct CustomSearchSheet: View {
                 Section("Search Mode") {
                     Toggle("Contains (instead of begins with)", isOn: $formVM.searchContains)
                 }
+
+                Section {
+                    Button("Reset Filters", role: .destructive) {
+                        formVM.reset()
+                        onReset()
+                        dismiss()
+                    }
+                }
             }
             .navigationTitle("Advanced Search")
             .navigationBarTitleDisplayMode(.inline)
@@ -47,7 +56,8 @@ struct CustomSearchSheet: View {
 }
 
 #Preview {
-    CustomSearchSheet { search in
-        print("Search: \(search)")
-    }
+    CustomSearchSheet(
+        onSearch: { search in print("Search: \(search)") },
+        onReset: { print("Reset") }
+    )
 }

@@ -27,23 +27,38 @@ final class AuthViewModel {
 
         if isLoggedIn {
             Task {
-                // Load token into Actor's memory, then fetch user
+                // Load token into Actor's memory
                 _ = await dataSource.loadSession()
+                // Refresh token first (handles expired tokens)
+                await refreshTokenIfNeeded()
+                // Then fetch user with valid token
                 await fetchCurrentUser()
+            }
+        }
+    }
+
+    private func refreshTokenIfNeeded() async {
+        do {
+            try await dataSource.refreshTokenIfNeeded()
+        } catch {
+            // Refresh failed - token might be invalid
+            if case AuthError.tokenExpired = error {
+                await logout()
             }
         }
     }
 
     // MARK: - Authentication
 
-    func login(email: String, password: String) async {
+    func login(email: String, password: String) async -> Bool {
         isLoading = true
         error = nil
 
         do {
             _ = try await dataSource.login(email: email, password: password)
-            isLoggedIn = true
             await fetchCurrentUser()
+            isLoading = false
+            return true
         } catch let authError as AuthError {
             error = authError
         } catch {
@@ -51,6 +66,11 @@ final class AuthViewModel {
         }
 
         isLoading = false
+        return false
+    }
+
+    func completeLogin() {
+        isLoggedIn = true
     }
 
     func register(email: String, password: String) async {
@@ -76,20 +96,6 @@ final class AuthViewModel {
     }
 
     // MARK: - Session Management
-
-    func refreshSessionIfNeeded() async {
-        guard isLoggedIn else { return }
-
-        do {
-            try await dataSource.refreshTokenIfNeeded()
-            if currentUser == nil {
-                await fetchCurrentUser()
-            }
-        } catch {
-            isLoggedIn = false
-            currentUser = nil
-        }
-    }
 
     func fetchCurrentUser() async {
         do {
@@ -134,10 +140,11 @@ private enum KeychainHelper {
 
     @MainActor
     static func hasValidSession() -> Bool {
+        // Only check if token EXISTS, not if expired
+        // Token renewal happens in background
         guard let tokenData = load(key: tokenKey),
               let _ = String(data: tokenData, encoding: .utf8),
-              let expiration = loadExpiration(),
-              Date() < expiration else {
+              let _ = loadExpiration() else {
             return false
         }
         return true
