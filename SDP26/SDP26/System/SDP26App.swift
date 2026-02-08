@@ -9,15 +9,18 @@ import SwiftUI
 
 @main
 struct SDP26App: App {
-    @State private var authVM = AuthViewModel.shared
+    @State private var session = AuthViewModel.shared
 
     var body: some Scene {
         WindowGroup {
-            if authVM.isLoggedIn {
-                ContentView()
-            } else {
-                LoginView()
+            Group {
+                if session.isLoggedIn {
+                    ContentView()
+                } else {
+                    LoginView()
+                }
             }
+            .environment(session)
         }
     }
 }

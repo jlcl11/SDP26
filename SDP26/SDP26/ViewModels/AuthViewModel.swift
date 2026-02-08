@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Security
 
 
 @Observable
@@ -22,7 +23,15 @@ final class AuthViewModel {
 
     init(dataSource: AuthDataSource = AuthDataSource.shared) {
         self.dataSource = dataSource
-        Task { await checkSession() }
+        isLoggedIn = KeychainHelper.hasValidSession()
+
+        if isLoggedIn {
+            Task {
+                // Load token into Actor's memory, then fetch user
+                _ = await dataSource.loadSession()
+                await fetchCurrentUser()
+            }
+        }
     }
 
     // MARK: - Authentication
@@ -85,7 +94,15 @@ final class AuthViewModel {
     func fetchCurrentUser() async {
         do {
             currentUser = try await dataSource.getMe()
+        } catch let error as AuthError {
+            // Only logout on actual auth errors
+            if case .tokenExpired = error {
+                await logout()
+            } else if case .invalidCredentials = error {
+                await logout()
+            }
         } catch {
+            // Network errors - don't logout, just leave currentUser as nil
             currentUser = nil
         }
     }
@@ -106,12 +123,43 @@ final class AuthViewModel {
         return "\(hours)h \(minutes)m"
     }
 
-    // MARK: - Private
+}
 
-    /// Only checks local Keychain - no network calls
-    /// If valid token exists locally, user is logged in immediately
-    private func checkSession() async {
-        isLoggedIn = await dataSource.loadSession()
-        // No network calls here - user data will be fetched lazily when needed
+// MARK: - Synchronous Keychain Helper
+
+private enum KeychainHelper {
+    private static let service = "com.mangavault.auth"
+    private static let tokenKey = "com.mangavault.jwt.token"
+    private static let expirationKey = "com.mangavault.jwt.expiration"
+
+    @MainActor
+    static func hasValidSession() -> Bool {
+        guard let tokenData = load(key: tokenKey),
+              let _ = String(data: tokenData, encoding: .utf8),
+              let expiration = loadExpiration(),
+              Date() < expiration else {
+            return false
+        }
+        return true
+    }
+
+    private static func load(key: String) -> Data? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: key,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+
+        return status == errSecSuccess ? result as? Data : nil
+    }
+
+    private static func loadExpiration() -> Date? {
+        guard let data = load(key: expirationKey) else { return nil }
+        return try? JSONDecoder().decode(Date.self, from: data)
     }
 }
