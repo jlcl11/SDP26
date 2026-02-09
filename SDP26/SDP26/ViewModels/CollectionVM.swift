@@ -8,6 +8,7 @@
 import Foundation
 import SwiftData
 import NetworkAPI
+import WidgetKit
 
 @Observable
 final class CollectionVM {
@@ -93,6 +94,10 @@ final class CollectionVM {
             // Step 3: Update in-memory collection
             collection = apiCollection
 
+            // Step 3.5: Pre-cache first 5 images for widget preview (sync)
+            await preCacheImagesForWidget(Array(apiCollection.prefix(5)))
+            WidgetDataManager.shared.refreshWidget()
+
             // Step 4: Subir pendientes - Push any pending changes to API
             let hadPendingChanges = await hasPendingChanges()
             if hadPendingChanges {
@@ -103,9 +108,11 @@ final class CollectionVM {
                 apiCollection = try await dataSource.fetchCollection()
                 await syncToLocalStorage(apiCollection)
                 collection = apiCollection
+                await preCacheImagesForWidget(Array(apiCollection.prefix(5)))
+                WidgetDataManager.shared.refreshWidget()
             }
 
-            // Step 6: Pre-cache images for offline viewing (background task)
+            // Step 6: Pre-cache remaining images for offline viewing (background task)
             Task.detached(priority: .background) { [collection] in
                 await self.preCacheImages(for: collection)
             }
@@ -159,6 +166,7 @@ final class CollectionVM {
         do {
             let localItems = try await dataContainer.fetchLocalCollection()
             collection = localItems
+            WidgetDataManager.shared.refreshWidget()
         } catch {
             print("Failed to load from local storage: \(error)")
         }
@@ -205,6 +213,7 @@ final class CollectionVM {
 
             // Remove from in-memory collection
             collection.removeAll { $0.manga.id == id }
+            WidgetDataManager.shared.refreshWidget()
 
         } catch {
             // API failed - queue delete for later and update locally
@@ -245,6 +254,7 @@ final class CollectionVM {
                     readingVolume: request.readingVolume
                 )
             }
+            WidgetDataManager.shared.refreshWidget()
 
             // Update pending count
             await updatePendingCount()
@@ -272,6 +282,7 @@ final class CollectionVM {
 
             // Remove from in-memory collection
             collection.removeAll { $0.manga.id == mangaId }
+            WidgetDataManager.shared.refreshWidget()
 
             // Update pending count
             await updatePendingCount()
@@ -351,6 +362,7 @@ final class CollectionVM {
         do {
             try await dataContainer.deleteAllItems()
             collection = []
+            WidgetDataManager.shared.clearWidgetData()
         } catch {
             print("Failed to clear local data: \(error)")
         }
@@ -358,19 +370,48 @@ final class CollectionVM {
 
     // MARK: - Image Pre-Caching
 
-    /// Pre-downloads and caches images for offline viewing
-    private func preCacheImages(for items: [UserMangaCollectionDTO]) async {
+    /// Pre-caches images for widget preview (runs synchronously before widget refresh)
+    private func preCacheImagesForWidget(_ items: [UserMangaCollectionDTO]) async {
         for item in items {
             guard let url = item.manga.imageURL else { continue }
 
-            // Check if already cached on disk
-            let fileURL = ImageDownloader.shared.getFileURL(url: url)
-            if FileManager.default.fileExists(atPath: fileURL.path()) {
+            // Skip if already in shared cache
+            if SharedImageCache.shared.loadImage(for: url) != nil {
+                continue
+            }
+
+            // Download and save to shared cache
+            if let image = await ImageDownloader.shared.loadImage(url: url) {
+                await SharedImageCache.shared.saveImage(image, for: url)
+            }
+        }
+    }
+
+    /// Pre-downloads and caches images for offline viewing and widget
+    private func preCacheImages(for items: [UserMangaCollectionDTO]) async {
+        var didCacheNewImages = false
+
+        for item in items {
+            guard let url = item.manga.imageURL else { continue }
+
+            // Check if already cached in shared cache (for widget)
+            if SharedImageCache.shared.loadImage(for: url) != nil {
                 continue // Already cached
             }
 
-            // Download and cache in background
-            _ = await ImageDownloader.shared.loadImage(url: url)
+            // Download and cache
+            if let image = await ImageDownloader.shared.loadImage(url: url) {
+                // Also save to shared cache for widget access
+                await SharedImageCache.shared.saveImage(image, for: url)
+                didCacheNewImages = true
+            }
+        }
+
+        // Refresh widget again after images are cached
+        if didCacheNewImages {
+            await MainActor.run {
+                WidgetDataManager.shared.refreshWidget()
+            }
         }
     }
 }
