@@ -63,4 +63,16 @@ extension PendingCollectionChange {
             readingVolume: readingVolume
         )
     }
+
+    /// Converts to Sendable DTO for crossing actor boundaries
+    func toDTO() -> PendingChangeDTO {
+        PendingChangeDTO(
+            mangaId: mangaId,
+            volumesOwned: volumesOwned,
+            readingVolume: readingVolume,
+            completeCollection: completeCollection,
+            timestamp: timestamp,
+            changeType: changeType
+        )
+    }
 }

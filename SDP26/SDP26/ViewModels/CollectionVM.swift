@@ -158,7 +158,7 @@ final class CollectionVM {
 
         do {
             let localItems = try await dataContainer.fetchLocalCollection()
-            collection = localItems.map { $0.toDTO() }
+            collection = localItems
         } catch {
             print("Failed to load from local storage: \(error)")
         }
@@ -173,8 +173,7 @@ final class CollectionVM {
         guard let dataContainer = dataContainer else { return nil }
 
         do {
-            let item = try await dataContainer.fetchItem(mangaId: mangaId)
-            return item?.toDTO()
+            return try await dataContainer.fetchItem(mangaId: mangaId)
         } catch {
             return nil
         }
@@ -236,7 +235,7 @@ final class CollectionVM {
 
             // Update in-memory collection
             if let index = collection.firstIndex(where: { $0.manga.id == request.manga }) {
-                var updated = collection[index]
+                let updated = collection[index]
                 // Create updated DTO (keeping manga data, updating collection data)
                 collection[index] = UserMangaCollectionDTO(
                     completeCollection: request.completeCollection,
@@ -296,11 +295,10 @@ final class CollectionVM {
 
             for change in pendingChanges {
                 do {
-                    switch change.type {
-                    case .update:
-                        try await dataSource.addOrUpdate(change.toRequest())
-                    case .delete:
+                    if change.isDelete {
                         try await dataSource.delete(mangaId: change.mangaId)
+                    } else {
+                        try await dataSource.addOrUpdate(change.toRequest())
                     }
 
                     // Remove from pending queue after successful sync

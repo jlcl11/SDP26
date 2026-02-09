@@ -64,6 +64,25 @@ struct ProfileView: View {
                     Label("\(collectionVM.totalVolumesOwned) volumes", systemImage: "book.fill")
                 }
 
+                // AI Analysis Section
+                Section("Apple Intelligence") {
+                    NavigationLink {
+                        AIProfileAnalysisView()
+                    } label: {
+                        Label {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("AI Reader Profile")
+                                Text("Discover your manga personality")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } icon: {
+                            Image(systemName: "apple.intelligence")
+                                .foregroundStyle(.purple)
+                        }
+                    }
+                }
+
                 // My Collection Section
                 Section("My Collection") {
                     NavigationLink {

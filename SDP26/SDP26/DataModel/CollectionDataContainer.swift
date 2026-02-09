@@ -69,21 +69,21 @@ actor CollectionDataContainer {
 
     // MARK: - Local CRUD Operations
 
-    /// Fetches all collection items from local storage
-    func fetchLocalCollection() throws -> [MangaCollectionModel] {
+    /// Fetches all collection items from local storage as DTOs (Sendable)
+    func fetchLocalCollection() throws -> [UserMangaCollectionDTO] {
         let fetch = FetchDescriptor<MangaCollectionModel>(
             sortBy: [SortDescriptor(\.title)]
         )
-        return try modelContext.fetch(fetch)
+        return try modelContext.fetch(fetch).map { $0.toDTO() }
     }
 
-    /// Fetches a single item by manga ID
-    func fetchItem(mangaId: Int) throws -> MangaCollectionModel? {
+    /// Fetches a single item by manga ID as DTO (Sendable)
+    func fetchItem(mangaId: Int) throws -> UserMangaCollectionDTO? {
         var fetch = FetchDescriptor<MangaCollectionModel>(
             predicate: #Predicate { $0.mangaId == mangaId }
         )
         fetch.fetchLimit = 1
-        return try modelContext.fetch(fetch).first
+        return try modelContext.fetch(fetch).first?.toDTO()
     }
 
     /// Deletes an item from local storage by manga ID
@@ -204,12 +204,12 @@ actor CollectionDataContainer {
         }
     }
 
-    /// Fetches all pending changes ordered by timestamp
-    func fetchPendingChanges() throws -> [PendingCollectionChange] {
+    /// Fetches all pending changes ordered by timestamp as Sendable DTOs
+    func fetchPendingChanges() throws -> [PendingChangeDTO] {
         let fetch = FetchDescriptor<PendingCollectionChange>(
             sortBy: [SortDescriptor(\.timestamp)]
         )
-        return try modelContext.fetch(fetch)
+        return try modelContext.fetch(fetch).map { $0.toDTO() }
     }
 
     /// Returns count of pending changes
@@ -311,4 +311,27 @@ struct CollectionStatistics: Sendable {
     let completeCollectionCount: Int
     let currentlyReadingCount: Int
     let totalVolumesOwned: Int
+}
+
+/// Sendable DTO for pending changes
+struct PendingChangeDTO: Sendable {
+    let mangaId: Int
+    let volumesOwned: [Int]
+    let readingVolume: Int?
+    let completeCollection: Bool
+    let timestamp: Date
+    let changeType: String
+
+    var isDelete: Bool {
+        changeType == "delete"
+    }
+
+    func toRequest() -> UserMangaCollectionRequest {
+        UserMangaCollectionRequest(
+            volumesOwned: volumesOwned,
+            completeCollection: completeCollection,
+            manga: mangaId,
+            readingVolume: readingVolume
+        )
+    }
 }

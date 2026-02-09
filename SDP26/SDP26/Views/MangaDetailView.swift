@@ -183,7 +183,7 @@ struct MangaDetailView: View {
     }
 }
 
-#Preview(traits: .sampleCollectionData) {
+#Preview {
     NavigationStack {
         MangaDetailView(manga: PreviewData.manga)
     }

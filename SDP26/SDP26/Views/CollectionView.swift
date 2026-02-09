@@ -200,6 +200,6 @@ private struct CollectionMangaCard: View {
     }
 }
 
-#Preview(traits: .sampleCollectionData) {
+#Preview {
     CollectionView()
 }

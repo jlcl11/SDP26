@@ -82,6 +82,14 @@
 		C8AUTH0B2F37000600B5FE01 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */; };
 		C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW042F37100200B5FE01 /* CollectionVM.swift */; };
 		C8FLOW052F37100300B5FE01 /* CollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */; };
+		C8AI00022F39000200B5FE01 /* MangaCollectionTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AI00012F39000100B5FE01 /* MangaCollectionTool.swift */; };
+		C8AI00042F39000400B5FE01 /* UserMangaProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AI00032F39000300B5FE01 /* UserMangaProfile.swift */; };
+		C8AI00062F39000600B5FE01 /* AIProfileAnalysisView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AI00052F39000500B5FE01 /* AIProfileAnalysisView.swift */; };
+		C8NET0012F39100100B5FE01 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8NET0022F39100200B5FE01 /* NetworkMonitor.swift */; };
+		C8NET0032F39100300B5FE01 /* OfflineBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8NET0042F39100400B5FE01 /* OfflineBanner.swift */; };
+		C8DATA012F39200100B5FE01 /* CollectionDataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DATA022F39200200B5FE01 /* CollectionDataContainer.swift */; };
+		C8DATA032F39200300B5FE01 /* MangaCollectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DATA042F39200400B5FE01 /* MangaCollectionModel.swift */; };
+		C8DATA052F39200500B5FE01 /* PendingCollectionChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8DATA062F39200600B5FE01 /* PendingCollectionChange.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -161,6 +169,14 @@
 		C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		C8FLOW042F37100200B5FE01 /* CollectionVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVM.swift; sourceTree = "<group>"; };
 		C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDataSource.swift; sourceTree = "<group>"; };
+		C8AI00012F39000100B5FE01 /* MangaCollectionTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaCollectionTool.swift; sourceTree = "<group>"; };
+		C8AI00032F39000300B5FE01 /* UserMangaProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMangaProfile.swift; sourceTree = "<group>"; };
+		C8AI00052F39000500B5FE01 /* AIProfileAnalysisView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProfileAnalysisView.swift; sourceTree = "<group>"; };
+		C8NET0022F39100200B5FE01 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		C8NET0042F39100400B5FE01 /* OfflineBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineBanner.swift; sourceTree = "<group>"; };
+		C8DATA022F39200200B5FE01 /* CollectionDataContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDataContainer.swift; sourceTree = "<group>"; };
+		C8DATA042F39200400B5FE01 /* MangaCollectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaCollectionModel.swift; sourceTree = "<group>"; };
+		C8DATA062F39200600B5FE01 /* PendingCollectionChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingCollectionChange.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -252,9 +268,20 @@
 		C87D525E2F2A8DAB00243D35 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				C8AI00072F39000700B5FE01 /* AI */,
 				C87D52342F2A7E1600243D35 /* SDP26App.swift */,
+				C8NET0022F39100200B5FE01 /* NetworkMonitor.swift */,
 			);
 			path = System;
+			sourceTree = "<group>";
+		};
+		C8AI00072F39000700B5FE01 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				C8AI00012F39000100B5FE01 /* MangaCollectionTool.swift */,
+				C8AI00032F39000300B5FE01 /* UserMangaProfile.swift */,
+			);
+			path = AI;
 			sourceTree = "<group>";
 		};
 		C87D525F2F2A8DB700243D35 /* Views */ = {
@@ -273,6 +300,7 @@
 				C829C6852F36700C00B5FE01 /* RegisterView.swift */,
 				C886A90F2F33610700A6EE9F /* CollectionView.swift */,
 				C886A9042F326A4F00A6EE9F /* MangaListView.swift */,
+				C8AI00052F39000500B5FE01 /* AIProfileAnalysisView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -320,6 +348,7 @@
 				C886A9162F3380A000A6EE9F /* ViewModifiers.swift */,
 				C886A9182F3381B000A6EE9F /* MangaDetailComponents.swift */,
 				C886A91A2F3382C000A6EE9F /* MangaCollectionCard.swift */,
+				C8NET0042F39100400B5FE01 /* OfflineBanner.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -341,6 +370,9 @@
 				C8AUTH042F37000200B5FE01 /* KeychainStorage.swift */,
 				C8AUTH0A2F37000500B5FE01 /* AuthDataSource.swift */,
 				C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */,
+				C8DATA022F39200200B5FE01 /* CollectionDataContainer.swift */,
+				C8DATA042F39200400B5FE01 /* MangaCollectionModel.swift */,
+				C8DATA062F39200600B5FE01 /* PendingCollectionChange.swift */,
 			);
 			path = DataModel;
 			sourceTree = "<group>";
@@ -491,6 +523,14 @@
 				C886A9192F3382C000A6EE9F /* MangaCollectionCard.swift in Sources */,
 				C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */,
 				C8FLOW052F37100300B5FE01 /* CollectionDataSource.swift in Sources */,
+				C8AI00022F39000200B5FE01 /* MangaCollectionTool.swift in Sources */,
+				C8AI00042F39000400B5FE01 /* UserMangaProfile.swift in Sources */,
+				C8AI00062F39000600B5FE01 /* AIProfileAnalysisView.swift in Sources */,
+				C8NET0012F39100100B5FE01 /* NetworkMonitor.swift in Sources */,
+				C8NET0032F39100300B5FE01 /* OfflineBanner.swift in Sources */,
+				C8DATA012F39200100B5FE01 /* CollectionDataContainer.swift in Sources */,
+				C8DATA032F39200300B5FE01 /* MangaCollectionModel.swift in Sources */,
+				C8DATA052F39200500B5FE01 /* PendingCollectionChange.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
