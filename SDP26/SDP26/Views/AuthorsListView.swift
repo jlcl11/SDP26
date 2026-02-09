@@ -9,16 +9,26 @@ import SwiftUI
 
 struct AuthorsListView: View {
     @Bindable var authorVM = AuthorViewModel.shared
+    private var networkMonitor = NetworkMonitor.shared
 
     var body: some View {
         NavigationStack {
-            List(authorVM.authors) { author in
-                NavigationLink(value: author) {
-                    AuthorRow(author: author)
+            List {
+                if !networkMonitor.isConnected {
+                    Section {
+                        OfflineBanner(message: "No connection - Cannot load authors")
+                    }
+                    .listRowInsets(EdgeInsets())
                 }
-                .onAppear {
-                    Task {
-                        await authorVM.loadNextPageIfNeeded(for: author)
+
+                ForEach(authorVM.authors) { author in
+                    NavigationLink(value: author) {
+                        AuthorRow(author: author)
+                    }
+                    .onAppear {
+                        Task {
+                            await authorVM.loadNextPageIfNeeded(for: author)
+                        }
                     }
                 }
             }

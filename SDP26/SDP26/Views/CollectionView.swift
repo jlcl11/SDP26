@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct CollectionView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var collectionVM = CollectionVM.shared
     @State private var selectedManga: MangaDTO?
 
@@ -24,6 +26,15 @@ struct CollectionView: View {
                 } else if collectionVM.collection.isEmpty {
                     emptyState
                 } else {
+                    // Status banners
+                    if collectionVM.isSyncing {
+                        syncingBanner
+                    } else if collectionVM.pendingChangesCount > 0 {
+                        pendingChangesBanner
+                    } else if collectionVM.isOffline {
+                        offlineBanner
+                    }
+
                     LazyVGrid(columns: columns, spacing: 16) {
                         ForEach(collectionVM.collection) { item in
                             Button {
@@ -51,6 +62,9 @@ struct CollectionView: View {
                 MangaDetailView(manga: manga)
             }
             .task {
+                // Configure VM with ModelContainer for local persistence
+                collectionVM.configure(with: modelContext.container)
+
                 if collectionVM.collection.isEmpty {
                     await collectionVM.loadCollection()
                 }
@@ -59,6 +73,35 @@ struct CollectionView: View {
                 await collectionVM.loadCollection()
             }
         }
+    }
+
+    private var offlineBanner: some View {
+        OfflineBanner(message: "Offline - Showing cached data")
+    }
+
+    private var pendingChangesBanner: some View {
+        HStack {
+            Image(systemName: "arrow.triangle.2.circlepath")
+            Text("\(collectionVM.pendingChangesCount) pending change(s) - Pull to sync")
+        }
+        .font(.caption)
+        .foregroundStyle(.orange)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(.orange.opacity(0.1))
+    }
+
+    private var syncingBanner: some View {
+        HStack {
+            ProgressView()
+                .scaleEffect(0.8)
+            Text("Syncing changes...")
+        }
+        .font(.caption)
+        .foregroundStyle(.blue)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(.blue.opacity(0.1))
     }
 
     private var emptyState: some View {
@@ -157,6 +200,6 @@ private struct CollectionMangaCard: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleCollectionData) {
     CollectionView()
 }

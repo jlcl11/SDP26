@@ -11,16 +11,26 @@ struct SearchView: View {
     @Bindable var vm = MangaBeginsWithViewModel.shared
     @State private var searchText = ""
     @State private var selectedManga: MangaDTO?
+    private var networkMonitor = NetworkMonitor.shared
 
     var body: some View {
         NavigationStack {
-            List(vm.mangas) { manga in
-                Button {
-                    selectedManga = manga
-                } label: {
-                    MangaRow(manga: manga)
+            List {
+                if !networkMonitor.isConnected {
+                    Section {
+                        OfflineBanner(message: "No connection - Cannot search")
+                    }
+                    .listRowInsets(EdgeInsets())
                 }
-                .buttonStyle(.plain)
+
+                ForEach(vm.mangas) { manga in
+                    Button {
+                        selectedManga = manga
+                    } label: {
+                        MangaRow(manga: manga)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
             .listStyle(.plain)
             .overlay {

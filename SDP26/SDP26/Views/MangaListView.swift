@@ -10,11 +10,15 @@ import SwiftUI
 struct MangaListView: View {
     @Bindable var mangaVM = MangaViewModel.shared
     @Bindable var bestMangaVM = BestMangaViewModel.shared
+    private var networkMonitor = NetworkMonitor.shared
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVStack(alignment: .leading) {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    if !networkMonitor.isConnected {
+                        OfflineBanner(message: "No connection - Cannot load mangas")
+                    }
                     BestMangasCarousel(mangas: bestMangaVM.mangas.sorted { $0.score > $1.score })
 
                     ForEach(mangaVM.mangas) { manga in

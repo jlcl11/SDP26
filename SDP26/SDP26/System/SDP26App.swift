@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SDP26App: App {
@@ -22,5 +23,6 @@ struct SDP26App: App {
             }
             .environment(session)
         }
+        .modelContainer(for: [MangaCollectionModel.self, PendingCollectionChange.self])
     }
 }

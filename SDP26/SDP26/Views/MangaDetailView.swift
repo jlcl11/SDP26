@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 import NetworkAPI
 
 struct MangaDetailView: View {
     let manga: MangaDTO
 
+    @Environment(\.modelContext) private var modelContext
     @State private var collectionVM = CollectionVM.shared
     @State private var volumesOwned: Set<Int> = []
     @State private var readingVolume: Int?
@@ -135,6 +137,8 @@ struct MangaDetailView: View {
             AuthorDetailView(author: author)
         }
         .task {
+            // Configure VM with ModelContainer for local persistence
+            collectionVM.configure(with: modelContext.container)
             await loadCollectionStatus()
         }
         .onChange(of: volumesOwned) { _, _ in
@@ -179,7 +183,7 @@ struct MangaDetailView: View {
     }
 }
 
-#Preview {
+#Preview(traits: .sampleCollectionData) {
     NavigationStack {
         MangaDetailView(manga: PreviewData.manga)
     }

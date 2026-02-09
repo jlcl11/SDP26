@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SwiftData
+import NetworkAPI
 
 @Observable
 final class CollectionVM {
@@ -14,11 +16,22 @@ final class CollectionVM {
     private(set) var collection: [UserMangaCollectionDTO] = []
     private(set) var isLoading = false
     private(set) var errorMessage: String?
+    private(set) var isOffline = false
+    private(set) var pendingChangesCount = 0
+    private(set) var isSyncing = false
 
     private let dataSource: CollectionDataSource
+    private var dataContainer: CollectionDataContainer?
 
     init(dataSource: CollectionDataSource) {
         self.dataSource = dataSource
+    }
+
+    // MARK: - SwiftData Setup
+
+    /// Configures the ViewModel with a ModelContainer for local persistence
+    func configure(with modelContainer: ModelContainer) {
+        self.dataContainer = CollectionDataContainer(modelContainer: modelContainer)
     }
 
     // MARK: - Computed Properties
@@ -57,48 +70,309 @@ final class CollectionVM {
 
     // MARK: - Public Methods
 
+    /// Loads collection with online-first strategy (cloud is source of truth):
+    /// 1. Fetch from API (download cloud)
+    /// 2. Sync to local storage (overwrite local)
+    /// 3. Push any pending offline changes to API (upload pending)
+    /// 4. Fetch again to get final state (cloud = local)
+    /// 5. If offline, fall back to local cache
     func loadCollection() async {
         guard !isLoading else { return }
 
         isLoading = true
         errorMessage = nil
+        isOffline = false
 
         do {
-            collection = try await dataSource.fetchCollection()
+            // Step 1: Descargar nube - Fetch from API (cloud is source of truth)
+            var apiCollection = try await dataSource.fetchCollection()
+
+            // Step 2: Sobrescribir local - Sync to local storage
+            await syncToLocalStorage(apiCollection)
+
+            // Step 3: Update in-memory collection
+            collection = apiCollection
+
+            // Step 4: Subir pendientes - Push any pending changes to API
+            let hadPendingChanges = await hasPendingChanges()
+            if hadPendingChanges {
+                await syncPendingChanges()
+
+                // Step 5: Volver a descargar - Fetch again to get final merged state
+                // This ensures local reflects the uploaded changes
+                apiCollection = try await dataSource.fetchCollection()
+                await syncToLocalStorage(apiCollection)
+                collection = apiCollection
+            }
+
+            // Step 6: Pre-cache images for offline viewing (background task)
+            Task.detached(priority: .background) { [collection] in
+                await self.preCacheImages(for: collection)
+            }
+
         } catch {
-            errorMessage = error.localizedDescription
+            // API failed - fall back to local cache
+            isOffline = true
+            await loadFromLocalStorage()
+
+            if collection.isEmpty {
+                errorMessage = "No internet connection and no cached data"
+            }
         }
 
+        // Update pending count
+        await updatePendingCount()
+
         isLoading = false
+    }
+
+    /// Checks if there are pending changes
+    private func hasPendingChanges() async -> Bool {
+        guard let dataContainer = dataContainer else { return false }
+        do {
+            return try await dataContainer.pendingChangesCount() > 0
+        } catch {
+            return false
+        }
+    }
+
+    /// Syncs API data to local SwiftData storage
+    private func syncToLocalStorage(_ apiCollection: [UserMangaCollectionDTO]) async {
+        guard let dataContainer = dataContainer else { return }
+
+        do {
+            // Sync API data to local storage
+            try await dataContainer.syncCollection(from: apiCollection)
+
+            // Remove items that are no longer in the API response
+            let currentIds = Set(apiCollection.map { $0.id })
+            try await dataContainer.removeStaleItems(currentIds: currentIds)
+        } catch {
+            print("Failed to sync to local storage: \(error)")
+        }
+    }
+
+    /// Loads collection from local SwiftData (fallback for offline)
+    private func loadFromLocalStorage() async {
+        guard let dataContainer = dataContainer else { return }
+
+        do {
+            let localItems = try await dataContainer.fetchLocalCollection()
+            collection = localItems.map { $0.toDTO() }
+        } catch {
+            print("Failed to load from local storage: \(error)")
+        }
     }
 
     func getItem(for mangaId: Int) -> UserMangaCollectionDTO? {
         collection.first { $0.manga.id == mangaId }
     }
 
+    /// Gets item from local storage (for offline access)
+    func getLocalItem(for mangaId: Int) async -> UserMangaCollectionDTO? {
+        guard let dataContainer = dataContainer else { return nil }
+
+        do {
+            let item = try await dataContainer.fetchItem(mangaId: mangaId)
+            return item?.toDTO()
+        } catch {
+            return nil
+        }
+    }
+
     func addOrUpdateManga(_ request: UserMangaCollectionRequest) async {
         do {
+            // Try API first (online-first)
             try await dataSource.addOrUpdate(request)
+
+            // Success - reload to get updated data and sync locally
             await loadCollection()
+
         } catch {
-            errorMessage = error.localizedDescription
+            // API failed - save locally and queue for later sync
+            await saveOfflineChange(request)
         }
     }
 
     func deleteManga(id: Int) async {
         do {
+            // Try API first (online-first)
             try await dataSource.delete(mangaId: id)
+
+            // Success - delete from local storage
+            if let dataContainer = dataContainer {
+                try await dataContainer.deleteItem(mangaId: id)
+            }
+
+            // Remove from in-memory collection
             collection.removeAll { $0.manga.id == id }
+
         } catch {
-            errorMessage = error.localizedDescription
+            // API failed - queue delete for later and update locally
+            await queueOfflineDelete(mangaId: id)
+        }
+    }
+
+    // MARK: - Offline Support
+
+    /// Saves a change locally when offline and queues it for API sync
+    private func saveOfflineChange(_ request: UserMangaCollectionRequest) async {
+        guard let dataContainer = dataContainer else {
+            errorMessage = "Cannot save offline - storage not configured"
+            return
+        }
+
+        do {
+            // Update local storage immediately
+            try await dataContainer.updateLocalItem(
+                mangaId: request.manga,
+                volumesOwned: request.volumesOwned,
+                readingVolume: request.readingVolume,
+                completeCollection: request.completeCollection
+            )
+
+            // Queue the change for API sync when back online
+            try await dataContainer.queuePendingChange(request)
+
+            // Update in-memory collection
+            if let index = collection.firstIndex(where: { $0.manga.id == request.manga }) {
+                var updated = collection[index]
+                // Create updated DTO (keeping manga data, updating collection data)
+                collection[index] = UserMangaCollectionDTO(
+                    completeCollection: request.completeCollection,
+                    id: updated.id,
+                    volumesOwned: request.volumesOwned,
+                    manga: updated.manga,
+                    readingVolume: request.readingVolume
+                )
+            }
+
+            // Update pending count
+            await updatePendingCount()
+
+            isOffline = true
+
+        } catch {
+            errorMessage = "Failed to save offline: \(error.localizedDescription)"
+        }
+    }
+
+    /// Queues a delete operation when offline
+    private func queueOfflineDelete(mangaId: Int) async {
+        guard let dataContainer = dataContainer else {
+            errorMessage = "Cannot save offline - storage not configured"
+            return
+        }
+
+        do {
+            // Queue the delete for API sync
+            try await dataContainer.queuePendingDelete(mangaId: mangaId)
+
+            // Delete from local storage
+            try await dataContainer.deleteItem(mangaId: mangaId)
+
+            // Remove from in-memory collection
+            collection.removeAll { $0.manga.id == mangaId }
+
+            // Update pending count
+            await updatePendingCount()
+
+            isOffline = true
+
+        } catch {
+            errorMessage = "Failed to queue delete: \(error.localizedDescription)"
+        }
+    }
+
+    /// Syncs all pending changes to API
+    func syncPendingChanges() async {
+        guard let dataContainer = dataContainer else { return }
+
+        do {
+            let pendingChanges = try await dataContainer.fetchPendingChanges()
+            guard !pendingChanges.isEmpty else { return }
+
+            isSyncing = true
+
+            for change in pendingChanges {
+                do {
+                    switch change.type {
+                    case .update:
+                        try await dataSource.addOrUpdate(change.toRequest())
+                    case .delete:
+                        try await dataSource.delete(mangaId: change.mangaId)
+                    }
+
+                    // Remove from pending queue after successful sync
+                    try await dataContainer.removePendingChange(mangaId: change.mangaId)
+
+                } catch {
+                    // Keep in queue if sync fails - will retry next time
+                    print("Failed to sync change for manga \(change.mangaId): \(error)")
+                }
+            }
+
+            isSyncing = false
+
+        } catch {
+            print("Failed to fetch pending changes: \(error)")
+            isSyncing = false
+        }
+    }
+
+    /// Updates the pending changes count
+    private func updatePendingCount() async {
+        guard let dataContainer = dataContainer else { return }
+
+        do {
+            pendingChangesCount = try await dataContainer.pendingChangesCount()
+        } catch {
+            pendingChangesCount = 0
         }
     }
 
     func getMangaFromCollection(id: Int) async -> UserMangaCollectionDTO? {
+        // Online-first: Try API first
         do {
-            return try await dataSource.fetchManga(id: id)
+            let item = try await dataSource.fetchManga(id: id)
+            // Sync single item to local storage
+            if let dataContainer = dataContainer {
+                try await dataContainer.syncItem(item)
+            }
+            return item
         } catch {
-            return nil
+            // Fall back to local cache if offline
+            return await getLocalItem(for: id)
+        }
+    }
+
+    /// Clears all local collection data (useful for logout)
+    func clearLocalData() async {
+        guard let dataContainer = dataContainer else { return }
+
+        do {
+            try await dataContainer.deleteAllItems()
+            collection = []
+        } catch {
+            print("Failed to clear local data: \(error)")
+        }
+    }
+
+    // MARK: - Image Pre-Caching
+
+    /// Pre-downloads and caches images for offline viewing
+    private func preCacheImages(for items: [UserMangaCollectionDTO]) async {
+        for item in items {
+            guard let url = item.manga.imageURL else { continue }
+
+            // Check if already cached on disk
+            let fileURL = ImageDownloader.shared.getFileURL(url: url)
+            if FileManager.default.fileExists(atPath: fileURL.path()) {
+                continue // Already cached
+            }
+
+            // Download and cache in background
+            _ = await ImageDownloader.shared.loadImage(url: url)
         }
     }
 }

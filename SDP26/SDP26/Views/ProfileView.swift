@@ -10,10 +10,17 @@ import SwiftUI
 struct ProfileView: View {
     @State private var authVM = AuthViewModel.shared
     @State private var collectionVM = CollectionVM.shared
+    private var networkMonitor = NetworkMonitor.shared
 
     var body: some View {
         NavigationStack {
             List {
+                if !networkMonitor.isConnected {
+                    Section {
+                        OfflineBanner(message: "No connection - Some features unavailable")
+                    }
+                    .listRowInsets(EdgeInsets())
+                }
                 // User Info Section
                 Section {
                     HStack(spacing: 16) {
@@ -39,8 +46,13 @@ struct ProfileView: View {
 
                 // Session Section
                 Section("Session") {
-                    Label("Connected", systemImage: "wifi")
-                        .foregroundStyle(.green)
+                    if networkMonitor.isConnected {
+                        Label("Connected", systemImage: "wifi")
+                            .foregroundStyle(.green)
+                    } else {
+                        Label("Offline", systemImage: "wifi.slash")
+                            .foregroundStyle(.orange)
+                    }
                     if let timeRemaining = authVM.tokenTimeRemaining {
                         Label("Token: \(timeRemaining)", systemImage: "clock.arrow.circlepath")
                     }
