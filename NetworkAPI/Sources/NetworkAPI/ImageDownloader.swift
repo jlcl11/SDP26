@@ -76,6 +76,11 @@ public actor ImageDownloader {
                 return UIImage(data: data)
             }
         }
-        return try? await image(for: url)
+        // Download and save to disk for offline access
+        if let image = try? await image(for: url) {
+            try? await saveImage(url: url)
+            return image
+        }
+        return nil
     }
 }
