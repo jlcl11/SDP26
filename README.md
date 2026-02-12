@@ -1,3 +1,6 @@
+
+![Free iPhone Air](https://github.com/user-attachments/assets/3412d9c3-d588-416d-ac57-e00bbc96fc15)
+
 # MangaVault
 
 A feature-rich iOS application for manga enthusiasts to discover, track, and manage their manga collections. Built with SwiftUI and modern Apple frameworks.
