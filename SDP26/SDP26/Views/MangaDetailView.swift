@@ -14,9 +14,7 @@ struct MangaDetailView: View {
 
     @Environment(\.modelContext) private var modelContext
     @State private var collectionVM = CollectionVM.shared
-    @State private var volumesOwned: Set<Int> = []
-    @State private var readingVolume: Int?
-    @State private var saveTask: Task<Void, Never>?
+    @State private var collectionEditor: MangaCollectionEditor?
 
     var body: some View {
         ScrollView {
@@ -88,11 +86,17 @@ struct MangaDetailView: View {
                     }
 
                     // Collection
-                    if let volumes = manga.volumes {
+                    if let volumes = manga.volumes, let editor = collectionEditor {
                         MangaCollectionCard(
                             totalVolumes: volumes,
-                            volumesOwned: $volumesOwned,
-                            readingVolume: $readingVolume
+                            volumesOwned: Binding(
+                                get: { editor.volumesOwned },
+                                set: { editor.volumesOwned = $0; editor.scheduleSave() }
+                            ),
+                            readingVolume: Binding(
+                                get: { editor.readingVolume },
+                                set: { editor.readingVolume = $0; editor.scheduleSave() }
+                            )
                         )
                     }
 
@@ -139,47 +143,9 @@ struct MangaDetailView: View {
         .task {
             // Configure VM with ModelContainer for local persistence
             collectionVM.configure(with: modelContext.container)
-            await loadCollectionStatus()
+            collectionEditor = MangaCollectionEditor(manga: manga, collectionVM: collectionVM)
+            await collectionEditor?.load()
         }
-        .onChange(of: volumesOwned) { _, _ in
-            scheduleCollectionSave()
-        }
-        .onChange(of: readingVolume) { _, _ in
-            scheduleCollectionSave()
-        }
-    }
-
-    // MARK: - Collection Methods
-
-    private func loadCollectionStatus() async {
-        if collectionVM.collection.isEmpty {
-            await collectionVM.loadCollection()
-        }
-
-        if let item = collectionVM.getItem(for: manga.id) {
-            volumesOwned = Set(item.volumesOwned)
-            readingVolume = item.readingVolume
-        }
-    }
-
-    /// Debounced save - cancels previous pending save and schedules a new one
-    private func scheduleCollectionSave() {
-        saveTask?.cancel()
-        saveTask = Task {
-            try? await Task.sleep(for: .milliseconds(300))
-            guard !Task.isCancelled else { return }
-            await saveCollection()
-        }
-    }
-
-    private func saveCollection() async {
-        let request = UserMangaCollectionRequest(
-            volumesOwned: volumesOwned.sorted(),
-            completeCollection: volumesOwned.count >= (manga.volumes ?? 0),
-            manga: manga.id,
-            readingVolume: readingVolume
-        )
-        await collectionVM.addOrUpdateManga(request)
     }
 }
 

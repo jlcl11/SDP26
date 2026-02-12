@@ -25,9 +25,7 @@ final class DemographicViewModel {
 
         do {
             demographics = try await dataSource.fetch()
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

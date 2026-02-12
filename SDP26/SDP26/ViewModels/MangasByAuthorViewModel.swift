@@ -34,9 +34,7 @@ final class MangasByAuthorViewModel {
         do {
             let newMangas = try await dataSource.fetchNextPage(authorID: author.id)
             mangas.append(contentsOf: newMangas)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

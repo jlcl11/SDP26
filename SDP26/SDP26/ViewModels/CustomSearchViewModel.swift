@@ -34,9 +34,7 @@ final class CustomSearchViewModel {
         do {
             let newMangas = try await dataSource.fetchNextPage(search: search)
             mangas.append(contentsOf: newMangas)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

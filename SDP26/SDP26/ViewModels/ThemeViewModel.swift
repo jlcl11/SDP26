@@ -25,9 +25,7 @@ final class ThemeViewModel {
 
         do {
             themes = try await dataSource.fetch()
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

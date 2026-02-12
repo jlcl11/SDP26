@@ -33,32 +33,12 @@ struct LoginView: View {
 
                     // Form
                     VStack(spacing: 20) {
-                        // Email Field
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Email").fieldLabel()
-
-                            HStack(spacing: 12) {
-                                Image(systemName: "envelope.fill").fieldIcon()
-                                TextField("Enter your email", text: $viewModel.email)
-                                    .textContentType(.emailAddress)
-                                    .keyboardType(.emailAddress)
-                                    .autocapitalization(.none)
-                                    .autocorrectionDisabled()
-                            }
-                            .inputField()
-                        }
-
-                        // Password Field
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Password").fieldLabel()
-
-                            HStack(spacing: 12) {
-                                Image(systemName: "lock.fill").fieldIcon()
-                                SecureField("Enter your password", text: $viewModel.password)
-                                    .textContentType(.password)
-                            }
-                            .inputField()
-                        }
+                        EmailField(text: $viewModel.email)
+                        PasswordField(
+                            label: "Password",
+                            placeholder: "Enter your password",
+                            text: $viewModel.password
+                        )
                     }
                     .padding(.horizontal)
 

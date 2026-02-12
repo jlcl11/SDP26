@@ -154,9 +154,7 @@ final class CollectionVM {
             // Remove items that are no longer in the API response
             let currentIds = Set(apiCollection.map { $0.id })
             try await dataContainer.removeStaleItems(currentIds: currentIds)
-        } catch {
-            print("Failed to sync to local storage: \(error)")
-        }
+        } catch { }
     }
 
     /// Loads collection from local SwiftData (fallback for offline)
@@ -167,9 +165,7 @@ final class CollectionVM {
             let localItems = try await dataContainer.fetchLocalCollection()
             collection = localItems
             WidgetDataManager.shared.refreshWidget()
-        } catch {
-            print("Failed to load from local storage: \(error)")
-        }
+        } catch { }
     }
 
     func getItem(for mangaId: Int) -> UserMangaCollectionDTO? {
@@ -317,14 +313,12 @@ final class CollectionVM {
 
                 } catch {
                     // Keep in queue if sync fails - will retry next time
-                    print("Failed to sync change for manga \(change.mangaId): \(error)")
                 }
             }
 
             isSyncing = false
 
         } catch {
-            print("Failed to fetch pending changes: \(error)")
             isSyncing = false
         }
     }
@@ -363,9 +357,7 @@ final class CollectionVM {
             try await dataContainer.deleteAllItems()
             collection = []
             WidgetDataManager.shared.clearWidgetData()
-        } catch {
-            print("Failed to clear local data: \(error)")
-        }
+        } catch { }
     }
 
     // MARK: - Image Pre-Caching

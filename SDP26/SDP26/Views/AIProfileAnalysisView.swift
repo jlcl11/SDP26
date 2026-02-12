@@ -9,12 +9,7 @@ import SwiftUI
 import FoundationModels
 
 struct AIProfileAnalysisView: View {
-    @State private var profile: UserMangaProfile?
-    @State private var partialProfile: UserMangaProfile.PartiallyGenerated?
-    @State private var isGenerating = false
-    @State private var error: String?
-    @State private var modelAvailable = true
-
+    @State private var viewModel = AIProfileAnalysisViewModel()
     private let collectionVM = CollectionVM.shared
 
     var body: some View {
@@ -23,27 +18,33 @@ struct AIProfileAnalysisView: View {
                 headerSection
             }
 
-            if !modelAvailable {
-                unavailableSection
-            } else if let error {
-                errorSection(error)
-            } else if isGenerating {
-                generatingSection
-            } else if let profile {
-                profileSection(profile)
-            } else if let partial = partialProfile {
-                partialProfileSection(partial)
-            } else {
-                emptySection
-            }
+            contentSection
         }
         .navigationTitle("AI Profile")
         .task {
-            checkModelAvailability()
+            viewModel.checkModelAvailability()
         }
     }
 
-    // MARK: - Sections
+    // MARK: - Content Section
+
+    @ViewBuilder
+    private var contentSection: some View {
+        switch viewModel.state {
+        case .unavailable:
+            unavailableSection
+        case .error(let message):
+            errorSection(message)
+        case .generating(let partial):
+            generatingSection(partial)
+        case .completed(let profile):
+            profileSection(profile)
+        case .idle:
+            emptySection
+        }
+    }
+
+    // MARK: - Header
 
     private var headerSection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -70,29 +71,33 @@ struct AIProfileAnalysisView: View {
                     .font(.caption)
                     .foregroundStyle(.orange)
             } else {
-                Button {
-                    Task {
-                        await generateProfile()
-                    }
-                } label: {
-                    HStack {
-                        if isGenerating {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                        } else {
-                            Image(systemName: "sparkles")
-                        }
-                        Text(isGenerating ? "Analyzing..." : "Analyze My Collection")
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.purple)
-                .disabled(isGenerating || collectionVM.collection.isEmpty || !modelAvailable)
+                generateButton
             }
         }
         .padding(.vertical, 8)
     }
+
+    private var generateButton: some View {
+        Button {
+            Task { await viewModel.generateProfile() }
+        } label: {
+            HStack {
+                if viewModel.isGenerating {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                } else {
+                    Image(systemName: "sparkles")
+                }
+                Text(viewModel.isGenerating ? "Analyzing..." : "Analyze My Collection")
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(.purple)
+        .disabled(!viewModel.canGenerate)
+    }
+
+    // MARK: - State Sections
 
     private var unavailableSection: some View {
         Section {
@@ -112,7 +117,7 @@ struct AIProfileAnalysisView: View {
         }
     }
 
-    private func errorSection(_ error: String) -> some View {
+    private func errorSection(_ message: String) -> some View {
         Section {
             VStack(spacing: 12) {
                 Image(systemName: "exclamationmark.triangle")
@@ -120,16 +125,13 @@ struct AIProfileAnalysisView: View {
                     .foregroundStyle(.orange)
                 Text("Analysis Failed")
                     .font(.headline)
-                Text(error)
+                Text(message)
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
 
                 Button("Try Again") {
-                    self.error = nil
-                    Task {
-                        await generateProfile()
-                    }
+                    Task { await viewModel.generateProfile() }
                 }
                 .buttonStyle(.bordered)
             }
@@ -138,9 +140,9 @@ struct AIProfileAnalysisView: View {
         }
     }
 
-    private var generatingSection: some View {
+    private func generatingSection(_ partial: UserMangaProfile.PartiallyGenerated?) -> some View {
         Section("Generating Profile...") {
-            if let partial = partialProfile {
+            if let partial {
                 partialProfileContent(partial)
             } else {
                 HStack {
@@ -157,6 +159,26 @@ struct AIProfileAnalysisView: View {
             }
         }
     }
+
+    private var emptySection: some View {
+        Section {
+            VStack(spacing: 12) {
+                Image(systemName: "sparkles")
+                    .font(.largeTitle)
+                    .foregroundStyle(.purple.opacity(0.5))
+                Text("Ready to Analyze")
+                    .font(.headline)
+                Text("Tap the button above to generate your unique reader profile based on your manga collection.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 20)
+        }
+    }
+
+    // MARK: - Profile Display
 
     private func profileSection(_ profile: UserMangaProfile) -> some View {
         Group {
@@ -209,33 +231,14 @@ struct AIProfileAnalysisView: View {
         }
     }
 
-    private func partialProfileSection(_ partial: UserMangaProfile.PartiallyGenerated) -> some View {
-        Section("Generating...") {
-            partialProfileContent(partial)
-        }
-    }
-
     private func partialProfileContent(_ partial: UserMangaProfile.PartiallyGenerated) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             if let readerType = partial.readerType {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Reader Type")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(readerType)
-                        .font(.headline)
-                        .foregroundStyle(.purple)
-                }
+                ProfileField(title: "Reader Type", content: readerType, style: .headline)
             }
 
             if let personality = partial.personalityDescription {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Personality")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(personality)
-                        .font(.subheadline)
-                }
+                ProfileField(title: "Personality", content: personality)
             }
 
             if let traits = partial.traits, !traits.isEmpty {
@@ -251,43 +254,19 @@ struct AIProfileAnalysisView: View {
             }
 
             if let pattern = partial.readingPattern {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Reading Pattern")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(pattern)
-                        .font(.subheadline)
-                }
+                ProfileField(title: "Reading Pattern", content: pattern)
             }
 
             if let genre = partial.favoriteGenre {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Favorite Genre")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(genre)
-                        .font(.subheadline)
-                }
+                ProfileField(title: "Favorite Genre", content: genre)
             }
 
             if let funFact = partial.funFact {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Fun Fact")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(funFact)
-                        .font(.subheadline)
-                }
+                ProfileField(title: "Fun Fact", content: funFact)
             }
 
             if let recommendation = partial.recommendation {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Recommendation")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text(recommendation)
-                        .font(.subheadline)
-                }
+                ProfileField(title: "Recommendation", content: recommendation)
             }
 
             ProgressView()
@@ -295,98 +274,28 @@ struct AIProfileAnalysisView: View {
         }
         .padding(.vertical, 8)
     }
+}
 
-    private var emptySection: some View {
-        Section {
-            VStack(spacing: 12) {
-                Image(systemName: "sparkles")
-                    .font(.largeTitle)
-                    .foregroundStyle(.purple.opacity(0.5))
-                Text("Ready to Analyze")
-                    .font(.headline)
-                Text("Tap the button above to generate your unique reader profile based on your manga collection.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20)
-        }
+// MARK: - Helper Views
+
+private struct ProfileField: View {
+    let title: String
+    let content: String
+    var style: Style = .regular
+
+    enum Style {
+        case regular
+        case headline
     }
 
-    // MARK: - Methods
-
-    private func checkModelAvailability() {
-        let model = SystemLanguageModel.default
-        switch model.availability {
-        case .available:
-            modelAvailable = true
-        case .unavailable:
-            modelAvailable = false
-        @unknown default:
-            modelAvailable = false
-        }
-    }
-
-    private func generateProfile() async {
-        guard modelAvailable else { return }
-
-        isGenerating = true
-        error = nil
-        profile = nil
-        partialProfile = nil
-
-        do {
-            let tool = MangaCollectionTool()
-
-            let session = LanguageModelSession(
-                tools: [tool],
-                instructions: {
-                    """
-                    You are a manga expert and personality analyst. Your task is to analyze the user's manga collection and create a fun, insightful reader profile.
-
-                    Use the getMangaCollection tool to retrieve the user's collection data, then generate a UserMangaProfile based on their preferences.
-
-                    Be creative with the reader type name - make it memorable and fun.
-                    The personality description should be insightful but lighthearted.
-                    Traits should reflect reading preferences (e.g., "Patient collector", "Genre explorer", "Completionist").
-                    The recommendation should be specific and explain why it fits their taste.
-
-                    Keep responses in the same language as the manga titles in the collection when possible.
-                    """
-                }
-            )
-
-            let stream = session.streamResponse(
-                generating: UserMangaProfile.self,
-                options: GenerationOptions(temperature: 0.8)
-            ) {
-                "Analyze my manga collection and create my unique reader profile. Use the tool to get my collection data first."
-            }
-
-            for try await snapshot in stream {
-                await MainActor.run {
-                    partialProfile = snapshot.content
-                }
-            }
-
-            // Get the final complete result
-            let response = try await session.respond(
-                to: "Based on the collection analysis, finalize my reader profile.",
-                generating: UserMangaProfile.self,
-                options: GenerationOptions(temperature: 0.8)
-            )
-
-            await MainActor.run {
-                profile = response.content
-                partialProfile = nil
-                isGenerating = false
-            }
-        } catch {
-            await MainActor.run {
-                self.error = error.localizedDescription
-                isGenerating = false
-            }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(content)
+                .font(style == .headline ? .headline : .subheadline)
+                .foregroundStyle(style == .headline ? .purple : .primary)
         }
     }
 }

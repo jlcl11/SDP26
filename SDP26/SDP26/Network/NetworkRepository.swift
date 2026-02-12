@@ -106,43 +106,19 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
     // MARK: - Authentication
 
     func login(email: String, password: String) async throws -> AuthResponse {
-        let url = URL.loginJWT
-        print("[NetworkRepository] login() - URL: \(url)")
-        let request = URLRequest.post(url: url, auth: .basic(email: email, pass: password))
-        print("[NetworkRepository] login() - Request: \(request)")
-        print("[NetworkRepository] login() - Using Basic Auth header")
-        do {
-            let response = try await getJSON(request, type: AuthResponse.self)
-            print("[NetworkRepository] login() - SUCCESS: token=\(response.token.prefix(20))..., expiresIn=\(response.expiresIn)")
-            return response
-        } catch {
-            print("[NetworkRepository] login() - FAILED: \(error)")
-            if case NetworkError.status(let code) = error {
-                print("[NetworkRepository] login() - HTTP Status Code: \(code)")
-                if code == 401 {
-                    print("[NetworkRepository] login() - 401 = Invalid credentials (wrong email/password or user not registered)")
-                }
-            }
-            throw error
-        }
+        let request = URLRequest.post(url: .loginJWT, auth: .basic(email: email, pass: password))
+        return try await getJSON(request, type: AuthResponse.self)
     }
 
     func register(credentials: UserCredentials) async throws {
-        print("[NetworkRepository] register() - URL: \(URL.createUser)")
-        print("[NetworkRepository] register() - email: \(credentials.email)")
         do {
             // Register requires App-Token header
             _ = try await getJSON(.post(url: .createUser, body: credentials, auth: .appToken), type: UserResponse.self)
-            print("[NetworkRepository] register() - SUCCESS")
         } catch {
-            print("[NetworkRepository] register() - FAILED: \(error)")
             if case NetworkError.status(let code) = error {
-                print("[NetworkRepository] register() - HTTP Status Code: \(code)")
                 if code == 201 {
-                    print("[NetworkRepository] register() - 201 = Created successfully (this is OK)")
                     return // 201 is success for creation
                 } else if code == 400 || code == 409 {
-                    print("[NetworkRepository] register() - \(code) = Email already exists")
                     throw AuthError.emailAlreadyExists
                 }
             }
@@ -151,81 +127,36 @@ struct NetworkRepository: NetworkInteractor, MangaRepository, BestMangaRepositor
     }
 
     func refreshToken(_ token: String) async throws -> AuthResponse {
-        print("[NetworkRepository] refreshToken() - URL: \(URL.refreshJWT)")
-        do {
-            // Refresh requires Bearer token in header
-            let response = try await getJSON(.post(url: .refreshJWT, auth: .bearer(token: token)), type: AuthResponse.self)
-            print("[NetworkRepository] refreshToken() - SUCCESS")
-            return response
-        } catch {
-            print("[NetworkRepository] refreshToken() - FAILED: \(error)")
-            throw error
-        }
+        // Refresh requires Bearer token in header
+        try await getJSON(.post(url: .refreshJWT, auth: .bearer(token: token)), type: AuthResponse.self)
     }
 
     func getMe(token: String) async throws -> UserResponse {
-        print("[NetworkRepository] getMe() - URL: \(URL.meJWT)")
-        do {
-            let response = try await getJSON(.get(url: .meJWT, token: token), type: UserResponse.self)
-            print("[NetworkRepository] getMe() - SUCCESS: \(response)")
-            return response
-        } catch {
-            print("[NetworkRepository] getMe() - FAILED: \(error)")
-            throw error
-        }
+        try await getJSON(.get(url: .meJWT, token: token), type: UserResponse.self)
     }
 
     // MARK: - Collection
 
     func getCollection(token: String) async throws -> [UserMangaCollectionDTO] {
-        print("[NetworkRepository] getCollection() - URL: \(URL.collection)")
-        do {
-            let response = try await getJSON(.get(url: .collection, auth: .bearer(token: token)), type: [UserMangaCollectionDTO].self)
-            print("[NetworkRepository] getCollection() - SUCCESS: \(response.count) items")
-            return response
-        } catch {
-            print("[NetworkRepository] getCollection() - FAILED: \(error)")
-            throw error
-        }
+        try await getJSON(.get(url: .collection, auth: .bearer(token: token)), type: [UserMangaCollectionDTO].self)
     }
 
     func getMangaFromCollection(id: Int, token: String) async throws -> UserMangaCollectionDTO {
-        let url = URL.collectionManga(id: id)
-        print("[NetworkRepository] getMangaFromCollection() - URL: \(url)")
-        do {
-            let response = try await getJSON(.get(url: url, auth: .bearer(token: token)), type: UserMangaCollectionDTO.self)
-            print("[NetworkRepository] getMangaFromCollection() - SUCCESS")
-            return response
-        } catch {
-            print("[NetworkRepository] getMangaFromCollection() - FAILED: \(error)")
-            throw error
-        }
+        try await getJSON(.get(url: .collectionManga(id: id), auth: .bearer(token: token)), type: UserMangaCollectionDTO.self)
     }
 
     func addOrUpdateManga(_ request: UserMangaCollectionRequest, token: String) async throws {
-        print("[NetworkRepository] addOrUpdateManga() - URL: \(URL.collection), manga: \(request.manga)")
         do {
             // Server may return 200 (update) or 201 (create) - both are success
             try await postJSON(.post(url: .collection, body: request, auth: .bearer(token: token)), status: 200)
-            print("[NetworkRepository] addOrUpdateManga() - SUCCESS (200)")
         } catch NetworkError.status(201) {
             // 201 Created is also success for new collection items
-            print("[NetworkRepository] addOrUpdateManga() - SUCCESS (201)")
         } catch {
-            print("[NetworkRepository] addOrUpdateManga() - FAILED: \(error)")
             throw error
         }
     }
 
     func deleteManga(id: Int, token: String) async throws {
-        let url = URL.collectionManga(id: id)
-        print("[NetworkRepository] deleteManga() - URL: \(url)")
-        do {
-            try await postJSON(.delete(url: url, auth: .bearer(token: token)))
-            print("[NetworkRepository] deleteManga() - SUCCESS")
-        } catch {
-            print("[NetworkRepository] deleteManga() - FAILED: \(error)")
-            throw error
-        }
+        try await postJSON(.delete(url: .collectionManga(id: id), auth: .bearer(token: token)))
     }
 }

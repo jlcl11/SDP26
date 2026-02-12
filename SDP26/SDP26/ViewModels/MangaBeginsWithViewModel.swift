@@ -25,9 +25,7 @@ final class MangaBeginsWithViewModel {
 
         do {
             mangas = try await dataSource.fetch(name: name)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

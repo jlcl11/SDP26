@@ -54,9 +54,7 @@ final class SearchFormViewModel {
             genres = try await g
             themes = try await t
             demographics = try await d
-        } catch {
-            print("Error loading options: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

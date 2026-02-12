@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04B6B1E974BAADE36968241E /* AuthFormFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3868516EAC19C590C528DFC /* AuthFormFields.swift */; };
+		2D42520A8B625BAC7F06AD7F /* MangaCollectionEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F6A86C2894D5DC664911BAF /* MangaCollectionEditor.swift */; };
+		44380099FE646BB68FE61BAA /* StatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 685C4B96DFAB062E940BFB3E /* StatusBanner.swift */; };
 		C829C67E2F36604A00B5FE01 /* AuthorDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C67D2F36604900B5FE01 /* AuthorDetailView.swift */; };
 		C829C6802F36605D00B5FE01 /* MangasByAuthorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C829C67F2F36605D00B5FE01 /* MangasByAuthorViewModel.swift */; };
 		C829C6822F36642400B5FE01 /* icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = C829C6812F36642400B5FE01 /* icon.icon */; };
@@ -91,6 +94,8 @@
 		C8F504A12F3A63A600BB9D4F /* MangaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C8F504922F3A63A400BB9D4F /* MangaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C8FLOW032F37100200B5FE01 /* CollectionVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW042F37100200B5FE01 /* CollectionVM.swift */; };
 		C8FLOW052F37100300B5FE01 /* CollectionDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */; };
+		C8IMG0012F3A800100B5FE01 /* SharedImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */; };
+		C8IMG0032F3A800300B5FE01 /* SharedImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */; };
 		C8NET0012F39100100B5FE01 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8NET0022F39100200B5FE01 /* NetworkMonitor.swift */; };
 		C8NET0032F39100300B5FE01 /* OfflineBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8NET0042F39100400B5FE01 /* OfflineBanner.swift */; };
 		C8WID0012F3A700100B5FE01 /* WidgetDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8WID0022F3A700200B5FE01 /* WidgetDataManager.swift */; };
@@ -104,8 +109,7 @@
 		C8WID00A2F3A700A00B5FE01 /* MangaDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52582F2A892200243D35 /* MangaDTO.swift */; };
 		C8WID00B2F3A700B00B5FE01 /* UserMangaCollectionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D525C2F2A8BF400243D35 /* UserMangaCollectionDTO.swift */; };
 		C8WID00C2F3A700C00B5FE01 /* Demographic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87D52562F2A88E400243D35 /* Demographic.swift */; };
-		C8IMG0012F3A800100B5FE01 /* SharedImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */; };
-		C8IMG0032F3A800300B5FE01 /* SharedImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */; };
+		AA4CF69AEC4649F4DB4A0A97 /* AIProfileAnalysisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52FD461FACD8FC16AE87EF3D /* AIProfileAnalysisViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -133,6 +137,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F6A86C2894D5DC664911BAF /* MangaCollectionEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangaCollectionEditor.swift; sourceTree = "<group>"; };
+		685C4B96DFAB062E940BFB3E /* StatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBanner.swift; sourceTree = "<group>"; };
+		B3868516EAC19C590C528DFC /* AuthFormFields.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFormFields.swift; sourceTree = "<group>"; };
 		C829C67D2F36604900B5FE01 /* AuthorDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorDetailView.swift; sourceTree = "<group>"; };
 		C829C67F2F36605D00B5FE01 /* MangasByAuthorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasByAuthorViewModel.swift; sourceTree = "<group>"; };
 		C829C6812F36642400B5FE01 /* icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = icon.icon; sourceTree = "<group>"; };
@@ -220,10 +227,11 @@
 		C8F504C82F3A65C600BB9D4F /* MangaWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MangaWidgetExtension.entitlements; sourceTree = "<group>"; };
 		C8FLOW042F37100200B5FE01 /* CollectionVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionVM.swift; sourceTree = "<group>"; };
 		C8FLOW062F37100300B5FE01 /* CollectionDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDataSource.swift; sourceTree = "<group>"; };
+		C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedImageCache.swift; sourceTree = "<group>"; };
 		C8NET0022F39100200B5FE01 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		C8NET0042F39100400B5FE01 /* OfflineBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineBanner.swift; sourceTree = "<group>"; };
 		C8WID0022F3A700200B5FE01 /* WidgetDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataManager.swift; sourceTree = "<group>"; };
-		C8IMG0022F3A800200B5FE01 /* SharedImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedImageCache.swift; sourceTree = "<group>"; };
+		52FD461FACD8FC16AE87EF3D /* AIProfileAnalysisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIProfileAnalysisViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -406,6 +414,8 @@
 				C88327032F2E816F007A2AE8 /* MangaViewModel.swift */,
 				C829C67F2F36605D00B5FE01 /* MangasByAuthorViewModel.swift */,
 				C8AUTH0C2F37000600B5FE01 /* AuthViewModel.swift */,
+				2F6A86C2894D5DC664911BAF /* MangaCollectionEditor.swift */,
+				52FD461FACD8FC16AE87EF3D /* AIProfileAnalysisViewModel.swift */,
 				C8FLOW042F37100200B5FE01 /* CollectionVM.swift */,
 			);
 			path = ViewModels;
@@ -424,6 +434,8 @@
 				C886A9162F3380A000A6EE9F /* ViewModifiers.swift */,
 				C886A9182F3381B000A6EE9F /* MangaDetailComponents.swift */,
 				C886A91A2F3382C000A6EE9F /* MangaCollectionCard.swift */,
+				685C4B96DFAB062E940BFB3E /* StatusBanner.swift */,
+				B3868516EAC19C590C528DFC /* AuthFormFields.swift */,
 				C8NET0042F39100400B5FE01 /* OfflineBanner.swift */,
 			);
 			path = Components;
@@ -653,6 +665,10 @@
 				C8DATA012F39200100B5FE01 /* CollectionDataContainer.swift in Sources */,
 				C8DATA032F39200300B5FE01 /* MangaCollectionModel.swift in Sources */,
 				C8DATA052F39200500B5FE01 /* PendingCollectionChange.swift in Sources */,
+				44380099FE646BB68FE61BAA /* StatusBanner.swift in Sources */,
+				04B6B1E974BAADE36968241E /* AuthFormFields.swift in Sources */,
+				2D42520A8B625BAC7F06AD7F /* MangaCollectionEditor.swift in Sources */,
+				AA4CF69AEC4649F4DB4A0A97 /* AIProfileAnalysisViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -814,7 +830,7 @@
 				CODE_SIGN_ENTITLEMENTS = SDP26/SDP26.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBFB47H6TQ;
+				DEVELOPMENT_TEAM = 62QLYFGB37;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -827,7 +843,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26;
+				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.offi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = NO;
@@ -847,7 +863,7 @@
 				CODE_SIGN_ENTITLEMENTS = SDP26/SDP26.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBFB47H6TQ;
+				DEVELOPMENT_TEAM = 62QLYFGB37;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -860,7 +876,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26;
+				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.offi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = NO;
@@ -880,7 +896,7 @@
 				CODE_SIGN_ENTITLEMENTS = MangaWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBFB47H6TQ;
+				DEVELOPMENT_TEAM = 62QLYFGB37;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MangaWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MangaWidget;
@@ -891,7 +907,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.MangaWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.offi.MangaWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -911,7 +927,7 @@
 				CODE_SIGN_ENTITLEMENTS = MangaWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = MBFB47H6TQ;
+				DEVELOPMENT_TEAM = 62QLYFGB37;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = MangaWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = MangaWidget;
@@ -922,7 +938,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.MangaWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = prueba.SDP26.offi.MangaWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

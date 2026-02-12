@@ -25,9 +25,7 @@ final class AuthorByNameViewModel {
 
         do {
             authors = try await dataSource.fetch(name: name)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

@@ -25,8 +25,6 @@ final class LoginViewModel {
     }
 
     func performLogin() async {
-        print("[LoginViewModel] performLogin() called")
-        print("[LoginViewModel] email: \(email), password length: \(password.count)")
         isLoading = true
         error = nil
 
@@ -37,21 +35,18 @@ final class LoginViewModel {
             error = authError
         } else if success {
             // Preload all data BEFORE navigating
-            print("[LoginViewModel] preloading app data...")
             async let mangasTask: () = MangaViewModel.shared.loadNextPage()
             async let bestMangasTask: () = BestMangaViewModel.shared.loadNextPage()
             async let authorsTask: () = AuthorViewModel.shared.loadNextPage()
             async let collectionTask: () = CollectionVM.shared.loadCollection()
 
             _ = await (mangasTask, bestMangasTask, authorsTask, collectionTask)
-            print("[LoginViewModel] app data preloaded")
 
             // NOW navigate to ContentView
             authVM.completeLogin()
         }
 
         isLoading = false
-        print("[LoginViewModel] performLogin() finished - isLoggedIn: \(authVM.isLoggedIn), error: \(String(describing: error))")
     }
 
     func clearError() {

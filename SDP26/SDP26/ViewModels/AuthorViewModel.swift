@@ -52,9 +52,7 @@ final class AuthorViewModel {
         do {
             let newAuthors = try await dataSource.fetchNextPage()
             allAuthors.append(contentsOf: newAuthors)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoadingAll = false
     }

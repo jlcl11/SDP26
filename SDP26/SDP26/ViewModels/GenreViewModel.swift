@@ -25,9 +25,7 @@ final class GenreViewModel {
 
         do {
             genres = try await dataSource.fetch()
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }

@@ -35,82 +35,56 @@ struct RegisterView: View {
                     VStack(spacing: 20) {
                         // Email Field
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Email").fieldLabel()
-
-                            HStack(spacing: 12) {
-                                Image(systemName: "envelope.fill").fieldIcon()
-                                TextField("Enter your email", text: $viewModel.email)
-                                    .textContentType(.emailAddress)
-                                    .keyboardType(.emailAddress)
-                                    .autocapitalization(.none)
-                                    .autocorrectionDisabled()
-                                    .onChange(of: viewModel.email) {
-                                        viewModel.clearError()
-                                    }
+                            EmailField(text: $viewModel.email) {
+                                viewModel.clearError()
                             }
-                            .inputField()
-                            .overlay {
-                                if viewModel.emailAlreadyExists {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(.red, lineWidth: 1)
-                                }
-                            }
+                            .validationBorder(show: viewModel.emailAlreadyExists, isValid: false)
 
                             if viewModel.emailAlreadyExists {
-                                HStack(spacing: 4) {
-                                    Image(systemName: "xmark.circle.fill")
-                                    Text("User already exists")
-                                }
-                                .font(.caption)
-                                .foregroundStyle(.red)
+                                ValidationMessage(
+                                    isValid: false,
+                                    validText: "",
+                                    invalidText: "User already exists"
+                                )
                             }
                         }
 
                         // Password Field
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Password").fieldLabel()
-
-                            HStack(spacing: 12) {
-                                Image(systemName: "lock.fill").fieldIcon()
-                                SecureField("Create a password", text: $viewModel.password)
-                                    .textContentType(.newPassword)
-                            }
-                            .inputField()
+                            PasswordField(
+                                label: "Password",
+                                placeholder: "Create a password",
+                                text: $viewModel.password,
+                                isNewPassword: true
+                            )
 
                             if !viewModel.password.isEmpty {
-                                HStack(spacing: 4) {
-                                    Image(systemName: viewModel.hasMinimumLength ? "checkmark.circle.fill" : "circle")
-                                        .foregroundStyle(viewModel.hasMinimumLength ? .green : .secondary)
-                                    Text("At least 8 characters")
-                                }
-                                .secondaryText()
+                                PasswordRequirement(
+                                    isMet: viewModel.hasMinimumLength,
+                                    text: "At least 8 characters"
+                                )
                             }
                         }
 
                         // Confirm Password Field
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Confirm Password").fieldLabel()
-
-                            HStack(spacing: 12) {
-                                Image(systemName: "lock.fill").fieldIcon()
-                                SecureField("Confirm your password", text: $viewModel.confirmPassword)
-                                    .textContentType(.newPassword)
-                            }
-                            .inputField()
-                            .overlay {
-                                if !viewModel.confirmPassword.isEmpty {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .stroke(viewModel.passwordsMatch ? .green : .red, lineWidth: 1)
-                                }
-                            }
+                            PasswordField(
+                                label: "Confirm Password",
+                                placeholder: "Confirm your password",
+                                text: $viewModel.confirmPassword,
+                                isNewPassword: true
+                            )
+                            .validationBorder(
+                                show: !viewModel.confirmPassword.isEmpty,
+                                isValid: viewModel.passwordsMatch
+                            )
 
                             if !viewModel.confirmPassword.isEmpty {
-                                HStack(spacing: 4) {
-                                    Image(systemName: viewModel.passwordsMatch ? "checkmark.circle.fill" : "xmark.circle.fill")
-                                    Text(viewModel.passwordsMatch ? "Passwords match" : "Passwords don't match")
-                                }
-                                .font(.caption)
-                                .foregroundStyle(viewModel.passwordsMatch ? .green : .red)
+                                ValidationMessage(
+                                    isValid: viewModel.passwordsMatch,
+                                    validText: "Passwords match",
+                                    invalidText: "Passwords don't match"
+                                )
                             }
                         }
                     }

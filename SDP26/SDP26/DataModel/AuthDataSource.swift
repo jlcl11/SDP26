@@ -27,29 +27,14 @@ actor AuthDataSource {
     // MARK: - Authentication
 
     func login(email: String, password: String) async throws -> AuthResponse {
-        print("[AuthDataSource] login() called with email: \(email)")
-        do {
-            let response = try await repository.login(email: email, password: password)
-            print("[AuthDataSource] login() success - token: \(response.token.prefix(20))..., expiresIn: \(response.expiresIn)")
-            await saveSession(token: response.token, expiresIn: response.expiresIn)
-            print("[AuthDataSource] login() session saved")
-            return response
-        } catch {
-            print("[AuthDataSource] login() FAILED with error: \(error)")
-            throw error
-        }
+        let response = try await repository.login(email: email, password: password)
+        await saveSession(token: response.token, expiresIn: response.expiresIn)
+        return response
     }
 
     func register(email: String, password: String) async throws {
-        print("[AuthDataSource] register() called with email: \(email)")
         let credentials = UserCredentials(email: email, password: password)
-        do {
-            try await repository.register(credentials: credentials)
-            print("[AuthDataSource] register() success")
-        } catch {
-            print("[AuthDataSource] register() FAILED with error: \(error)")
-            throw error
-        }
+        try await repository.register(credentials: credentials)
     }
 
     func logout() async {

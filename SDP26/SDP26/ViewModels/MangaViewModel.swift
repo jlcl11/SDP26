@@ -97,9 +97,7 @@ final class MangaViewModel {
         do {
             let newMangas = try await dataSource.fetchNextPage()
             allMangas.append(contentsOf: newMangas)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoadingAll = false
     }

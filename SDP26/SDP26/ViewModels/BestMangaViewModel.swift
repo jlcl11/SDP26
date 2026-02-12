@@ -26,9 +26,7 @@ final class BestMangaViewModel {
         do {
             let newMangas = try await dataSource.fetchNextPage()
             mangas.append(contentsOf: newMangas)
-        } catch {
-            print("Error: \(error)")
-        }
+        } catch { }
 
         isLoading = false
     }
