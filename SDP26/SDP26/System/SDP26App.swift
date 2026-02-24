@@ -2,7 +2,7 @@
 //  SDP26App.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 28/1/26.
+//  Created by José Luis Corral López on 1/12/25.
 //
 
 import SwiftUI
@@ -32,7 +32,7 @@ struct SDP26App: App {
 /// Provides a shared ModelContainer for both the main app and widgets
 /// using App Groups to share the SwiftData store.
 enum SharedModelContainer {
-    static let appGroupIdentifier = "group.prueba.SDP26"
+    static let appGroupIdentifier = "group.prueba.offi"
 
     static func create() -> ModelContainer {
         let schema = Schema([

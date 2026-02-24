@@ -2,7 +2,7 @@
 //  MangaWidget.swift
 //  MangaWidget
 //
-//  Created by José Luis Corral López on 9/2/26.
+//  Created by José Luis Corral López on 18/2/26.
 //
 
 import WidgetKit
@@ -12,7 +12,7 @@ import SwiftData
 // MARK: - Shared Model Container (matches main app)
 
 enum SharedModelContainer {
-    static let appGroupIdentifier = "group.prueba.SDP26"
+    static let appGroupIdentifier = "group.prueba.offi"
 
     static func create() -> ModelContainer {
         let schema = Schema([

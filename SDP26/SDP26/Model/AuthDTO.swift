@@ -2,7 +2,7 @@
 //  AuthDTO.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 7/2/26.
+//  Created by José Luis Corral López on 25/1/26.
 //
 
 import Foundation

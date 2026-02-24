@@ -12,7 +12,7 @@ import CryptoKit
 actor SharedImageCache {
     static let shared = SharedImageCache()
 
-    private let appGroupIdentifier = "group.prueba.SDP26"
+    private let appGroupIdentifier = "group.prueba.offi"
 
     private init() {}
 

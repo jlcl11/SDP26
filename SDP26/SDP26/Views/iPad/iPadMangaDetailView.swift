@@ -2,7 +2,7 @@
 //  iPadMangaDetailView.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 6/2/26.
+//  Created by José Luis Corral López on 11/2/26.
 //
 
 import SwiftUI

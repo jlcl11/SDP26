@@ -2,7 +2,7 @@
 //  MangaFetcher.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 29/1/26.
+//  Created by José Luis Corral López on 15/12/25.
 //
 
 import SwiftUI

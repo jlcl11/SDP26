@@ -2,7 +2,7 @@
 //  EmptyStateView.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 2/2/26.
+//  Created by José Luis Corral López on 19/1/26.
 //
 
 import SwiftUI

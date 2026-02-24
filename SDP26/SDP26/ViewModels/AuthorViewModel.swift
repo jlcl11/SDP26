@@ -2,7 +2,7 @@
 //  AuthorViewModel.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 31/1/26.
+//  Created by José Luis Corral López on 19/12/25.
 //
 
 import Foundation

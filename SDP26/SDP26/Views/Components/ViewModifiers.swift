@@ -2,7 +2,7 @@
 //  ViewModifiers.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 4/2/26.
+//  Created by José Luis Corral López on 20/1/26.
 //
 
 import SwiftUI

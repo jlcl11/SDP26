@@ -2,7 +2,7 @@
 //  AuthViewModel.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 7/2/26.
+//  Created by José Luis Corral López on 30/1/26.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  RegisterViewModel.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 6/2/26.
+//  Created by José Luis Corral López on 29/1/26.
 //
 
 import Foundation

@@ -2,7 +2,7 @@
 //  CollectionDataSource.swift
 //  SDP26
 //
-//  Created by José Luis Corral López on 8/2/26.
+//  Created by José Luis Corral López on 4/2/26.
 //
 
 import Foundation
