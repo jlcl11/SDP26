@@ -141,21 +141,23 @@ struct AIProfileAnalysisView: View {
     }
 
     private func generatingSection(_ partial: UserMangaProfile.PartiallyGenerated?) -> some View {
-        Section("Generating Profile...") {
+        Group {
             if let partial {
-                partialProfileContent(partial)
+                partialProfileSections(partial)
             } else {
-                HStack {
-                    Spacer()
-                    VStack(spacing: 12) {
-                        ProgressView()
-                        Text("Analyzing your collection...")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                Section("Generating Profile...") {
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            ProgressView()
+                            Text("Analyzing your collection...")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
                     }
-                    Spacer()
+                    .padding(.vertical, 20)
                 }
-                .padding(.vertical, 20)
             }
         }
     }
@@ -231,71 +233,76 @@ struct AIProfileAnalysisView: View {
         }
     }
 
-    private func partialProfileContent(_ partial: UserMangaProfile.PartiallyGenerated) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+    private func partialProfileSections(_ partial: UserMangaProfile.PartiallyGenerated) -> some View {
+        Group {
             if let readerType = partial.readerType {
-                ProfileField(title: "Reader Type", content: readerType, style: .headline)
-            }
-
-            if let personality = partial.personalityDescription {
-                ProfileField(title: "Personality", content: personality)
+                Section("Your Reader Type") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(readerType)
+                            .font(.title2.bold())
+                            .foregroundStyle(.purple)
+                        if let personality = partial.personalityDescription {
+                            Text(personality)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 4)
+                }
             }
 
             if let traits = partial.traits, !traits.isEmpty {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Traits")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                Section("Personality Traits") {
                     ForEach(traits, id: \.self) { trait in
-                        Text("• \(trait)")
-                            .font(.subheadline)
+                        Label(trait, systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.primary)
                     }
                 }
             }
 
             if let pattern = partial.readingPattern {
-                ProfileField(title: "Reading Pattern", content: pattern)
+                Section("Reading Pattern") {
+                    Text(pattern)
+                        .font(.subheadline)
+                }
             }
 
             if let genre = partial.favoriteGenre {
-                ProfileField(title: "Favorite Genre", content: genre)
+                Section("Favorite Genre") {
+                    Label(genre, systemImage: "star.fill")
+                        .foregroundStyle(.yellow)
+                }
             }
 
             if let funFact = partial.funFact {
-                ProfileField(title: "Fun Fact", content: funFact)
+                Section("Fun Fact") {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "lightbulb.fill")
+                            .foregroundStyle(.yellow)
+                        Text(funFact)
+                            .font(.subheadline)
+                    }
+                }
             }
 
             if let recommendation = partial.recommendation {
-                ProfileField(title: "Recommendation", content: recommendation)
+                Section("Recommendation") {
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "book.fill")
+                            .foregroundStyle(.blue)
+                        Text(recommendation)
+                            .font(.subheadline)
+                    }
+                }
             }
 
-            ProgressView()
-                .frame(maxWidth: .infinity, alignment: .center)
-        }
-        .padding(.vertical, 8)
-    }
-}
-
-// MARK: - Helper Views
-
-private struct ProfileField: View {
-    let title: String
-    let content: String
-    var style: Style = .regular
-
-    enum Style {
-        case regular
-        case headline
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Text(content)
-                .font(style == .headline ? .headline : .subheadline)
-                .foregroundStyle(style == .headline ? .purple : .primary)
+            Section {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+            }
         }
     }
 }
